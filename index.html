@@ -8,39 +8,45 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; -webkit-tap-highlight-color:transparent; }
-body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
-.header { display:flex; align-items:center; justify-content:space-between; padding:16px; }
-.header h1 { font-size:20px; }
-.avatar { width:40px; height:40px; border-radius:50%; background:#f59e0b; display:flex; align-items:center; justify-content:center; font-weight:bold; }
-.badge { background:#1e293b; padding:4px 10px; border-radius:20px; font-size:12px; color:#f59e0b; }
-.card { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); margin:12px 16px; padding:20px; border-radius:16px; border:1px solid #1e293b; }
-.balance-label { text-align:center; color:#94a3b8; font-size:14px; margin-bottom:8px; }
-.balance-value { text-align:center; font-size:42px; font-weight:bold; margin-bottom:20px; }
-.balance-value .usd { color:#10b981; font-size:24px; }
-.btn-primary { width:100%; padding:14px; background:#0ea5e9; color:#fff; border:none; border-radius:12px; font-size:16px; font-weight:bold; cursor:pointer; }
-.stats-row { display:flex; gap:10px; margin-top:16px; }
-.stat-box { flex:1; background:#1e293b; padding:12px; border-radius:12px; text-align:center; }
-.stat-box .num { color:#10b981; font-size:18px; font-weight:bold; }
-.stat-box .lbl { color:#94a3b8; font-size:11px; margin-top:4px; }
-.section-title { padding:16px 16px 8px; font-size:16px; color:#e2e8f0; font-weight:bold; }
-.ad-network { background:#1e293b; margin:8px 16px; padding:16px; border-radius:14px; display:flex; align-items:center; justify-content:space-between; }
-.ad-network .name { font-size:15px; font-weight:bold; margin-bottom:4px; }
-.ad-network .reward { color:#10b981; font-size:13px; }
-.ad-network .desc { color:#94a3b8; font-size:12px; margin-top:2px; }
-.ad-btn { background:#0ea5e9; color:#fff; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer; }
+body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; font-size:13px; }
+.header { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; }
+.header h1 { font-size:16px; }
+.avatar { width:32px; height:32px; border-radius:50%; background:#f59e0b; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:13px; }
+.badge { background:#1e293b; padding:3px 8px; border-radius:20px; font-size:10px; color:#f59e0b; }
+.card { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); margin:8px 12px; padding:14px; border-radius:14px; border:1px solid #1e293b; }
+.balance-label { text-align:center; color:#94a3b8; font-size:11px; margin-bottom:6px; }
+.balance-value { text-align:center; font-size:30px; font-weight:bold; margin-bottom:14px; }
+.balance-value .usd { color:#10b981; font-size:16px; }
+.btn-primary { width:100%; padding:11px; background:#0ea5e9; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer; }
+.stats-row { display:flex; gap:8px; margin-top:12px; }
+.stat-box { flex:1; background:#1e293b; padding:10px 6px; border-radius:10px; text-align:center; }
+.stat-box .num { color:#10b981; font-size:14px; font-weight:bold; }
+.stat-box .lbl { color:#94a3b8; font-size:10px; margin-top:2px; }
+.section-title { padding:12px 12px 6px; font-size:13px; color:#e2e8f0; font-weight:bold; }
+.ad-network { background:#1e293b; margin:6px 12px; padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:space-between; }
+.ad-network .name { font-size:13px; font-weight:bold; margin-bottom:2px; }
+.ad-network .reward { color:#10b981; font-size:11px; }
+.ad-network .desc { color:#94a3b8; font-size:10px; margin-top:2px; }
+.ad-btn { background:#0ea5e9; color:#fff; border:none; padding:8px 14px; border-radius:9px; font-weight:bold; cursor:pointer; font-size:11px; }
 .ad-btn.disabled { background:#475569; cursor:not-allowed; }
 .ad-btn.success { background:#10b981; }
-.bottom-nav { position:fixed; bottom:20px; left:8px; right:8px; background:#0f172a; border:1px solid #1e293b; border-radius:20px; display:flex; justify-content:space-around; padding:8px 0; z-index:9999; box-shadow:0 -4px 20px rgba(0,0,0,0.5); }
-.nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; color:#64748b; font-size:11px; cursor:pointer; background:none; border:none; flex:1; padding:6px; }
+.bottom-nav { position:fixed; bottom:12px; left:8px; right:8px; background:#0f172a; border:1px solid #1e293b; border-radius:18px; display:flex; justify-content:space-around; padding:6px 0; z-index:9999; box-shadow:0 -4px 20px rgba(0,0,0,0.5); }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; color:#64748b; font-size:9px; cursor:pointer; background:none; border:none; flex:1; padding:4px; }
 .nav-item.active { color:#0ea5e9; }
-.nav-item .icon { font-size:20px; }
+.nav-item .icon { font-size:16px; }
 .tab-content { display:none; }
 .tab-content.active { display:block; }
-.tabs-bar { display:flex; gap:8px; margin:12px 16px; background:#1e293b; padding:6px; border-radius:14px; }
-.tabs-bar button { flex:1; padding:10px; border:none; background:transparent; color:#94a3b8; border-radius:10px; font-size:13px; cursor:pointer; font-weight:bold; }
+.tabs-bar { display:flex; gap:5px; margin:8px 12px; background:#1e293b; padding:4px; border-radius:12px; }
+.tabs-bar button { flex:1; padding:8px; border:none; background:transparent; color:#94a3b8; border-radius:9px; font-size:11px; cursor:pointer; font-weight:bold; }
 .tabs-bar button.active { background:#0ea5e9; color:#fff; }
-</style>
-</head>
+.ref-link-box { background:#0f172a; padding:10px; border-radius:9px; margin:10px 0; word-break:break-all; font-size:11px; color:#94a3b8; }
+.friend-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:#1e293b; margin:5px 12px; border-radius:10px; }
+.friend-row .friend-name { font-weight:bold; font-size:12px; }
+.friend-row .friend-status { font-size:10px; color:#94a3b8; }
+.friend-row .friend-status.active { color:#10b981; }
+.friend-row .friend-status.pending { color:#f59e0b; }
+       </style>
+       </head>
 <body>
 
 <div class="header">
@@ -49,12 +55,11 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
     <span class="badge">⭐ برونزي</span>
   </div>
   <div class="user">
-    <div style="text-align:left; font-size:13px;"><div id="userName">...</div></div>
+    <div style="text-align:left; font-size:11px;"><div id="userName">...</div></div>
     <div class="avatar" id="userAvatar">؟</div>
   </div>
 </div>
 
-<!-- ================= HOME ================= -->
 <div class="tab-content active" id="tab-home">
   <div class="card">
     <div class="balance-label">أرباحك</div>
@@ -67,16 +72,16 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
   </div>
 
   <div class="card">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-      <div style="color:#94a3b8; font-size:13px;">إعلانات اليوم</div>
-      <div style="color:#10b981; font-size:13px; font-weight:bold; direction:ltr;" id="dailyCounter">0 / 50</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <div style="color:#94a3b8; font-size:11px;">إعلانات اليوم</div>
+      <div style="color:#10b981; font-size:11px; font-weight:bold; direction:ltr;" id="dailyCounter">0 / 50</div>
     </div>
-    <div style="width:100%; height:8px; background:#0f172a; border-radius:10px; overflow:hidden; margin-bottom:12px;">
+    <div style="width:100%; height:6px; background:#0f172a; border-radius:10px; overflow:hidden; margin-bottom:10px;">
       <div id="dailyProgress" style="height:100%; width:0%; background:linear-gradient(90deg,#0ea5e9,#10b981); transition:width 0.3s;"></div>
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div style="color:#94a3b8; font-size:12px;">⏱ إعادة التعيين اليومية</div>
-      <div style="color:#f59e0b; font-size:13px; font-weight:bold;" id="resetTimer">00:00:00</div>
+      <div style="color:#94a3b8; font-size:10px;">⏱ إعادة التعيين اليومية</div>
+      <div style="color:#f59e0b; font-size:11px; font-weight:bold;" id="resetTimer">00:00:00</div>
     </div>
   </div>
 
@@ -87,7 +92,6 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
   <div class="ad-network"><div><div class="name">Monetix</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Monetix',0.0002)">مشاهدة ▶</button></div>
 </div>
 
-<!-- ================= TASKS ================= -->
 <div class="tab-content" id="tab-tasks">
   <div class="tabs-bar">
     <button class="active" id="taskTab-daily" onclick="switchTaskTab('daily')">🔥 اليومية</button>
@@ -95,104 +99,81 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
     <button id="taskTab-vip" onclick="switchTaskTab('vip')">👑 VIP</button>
   </div>
 
-  <!-- Daily tasks -->
   <div id="tasks-daily">
     <div class="ad-network">
-      <div>
-        <div class="name">مكافأة تسجيل الدخول اليومي</div>
-        <div class="reward">💎 +0.0001</div>
-      </div>
+      <div><div class="name">مكافأة تسجيل الدخول اليومي</div><div class="reward">💎 +0.0001</div></div>
       <button class="ad-btn" id="btn-daily-login" onclick="claimDailyLogin()">استلام</button>
     </div>
     <div class="ad-network">
-      <div>
-        <div class="name">مشاهدة 5 إعلانات فيديو</div>
-        <div class="reward">💎 +0.0005</div>
-        <div class="desc" id="task-watch-progress">0 / 5</div>
-      </div>
+      <div><div class="name">مشاهدة 5 إعلانات فيديو</div><div class="reward">💎 +0.0005</div><div class="desc" id="task-watch-progress">0 / 5</div></div>
       <button class="ad-btn" id="btn-daily-watch" onclick="claimWatchTask()">مشاهدة</button>
     </div>
   </div>
 
-  <!-- Beginner tasks -->
   <div id="tasks-beginner" style="display:none;">
-    <div class="ad-network">
-      <div>
-        <div class="name">📢 متابعة قناة PaidZ الرسمية</div>
-        <div class="reward">💎 +0.0001</div>
-      </div>
-      <button class="ad-btn" id="btn-task-channel" onclick="claimChannelTask()">فتح</button>
-    </div>
-    <div class="ad-network">
-      <div>
-        <div class="name">💬 الانضمام لمحادثة PaidZ</div>
-        <div class="reward">💎 +0.0001</div>
-      </div>
-      <button class="ad-btn" id="btn-task-group" onclick="claimGroupTask()">فتح</button>
-    </div>
-    <div class="ad-network">
-      <div>
-        <div class="name">👥 دعوة 3 أصدقاء</div>
-        <div class="reward">💎 +0.0005</div>
-        <div class="desc" id="task-ref-progress">0 / 3</div>
-      </div>
-      <button class="ad-btn" id="btn-task-ref" onclick="showTabByName('friends')">دعوة</button>
-    </div>
+    <div class="ad-network"><div><div class="name">📢 متابعة قناة PaidHub الرسمية</div><div class="reward">💎 +0.0001</div></div><button class="ad-btn" onclick="alert('قريباً')">تحقق</button></div>
+    <div class="ad-network"><div><div class="name">💬 الانضمام للمحادثة</div><div class="reward">💎 +0.0001</div></div><button class="ad-btn" onclick="alert('قريباً')">تحقق</button></div>
+    <div class="ad-network"><div><div class="name">👥 دعوة 3 أصدقاء</div><div class="reward">💎 +0.0005</div><div class="desc" id="task-ref-progress">0 / 3</div></div><button class="ad-btn" onclick="showTabByName('friends')">دعوة</button></div>
   </div>
 
-  <!-- VIP tasks -->
   <div id="tasks-vip" style="display:none;">
-    <div class="ad-network">
-      <div>
-        <div class="name">👑 قناة VIP: TON Raids</div>
-        <div class="desc">مهام حصرية لأعضاء VIP</div>
-        <div class="reward">💎 +0.0004</div>
-      </div>
-      <button class="ad-btn" onclick="openLink('https://t.me/tonraids')">انضم</button>
-    </div>
-    <div class="ad-network">
-      <div>
-        <div class="name">👑 قناة VIP: TON Breach</div>
-        <div class="desc">مهام حصرية لأعضاء VIP</div>
-        <div class="reward">💎 +0.0004</div>
-      </div>
-      <button class="ad-btn" onclick="openLink('https://t.me/tonbreach')">انضم</button>
-    </div>
+    <div class="ad-network"><div><div class="name">👑 TON Raids</div><div class="desc">مهام حصرية</div><div class="reward">💎 +0.0004</div></div><button class="ad-btn" onclick="openLink('https://t.me/tonraids')">انضم</button></div>
   </div>
 </div>
 
-<!-- ================= FRIENDS ================= -->
 <div class="tab-content" id="tab-friends">
-  <div class="card">
-    <div class="balance-label">رابط الإحالة الخاص بك</div>
-    <div style="background:#0f172a; padding:12px; border-radius:10px; margin:12px 0; word-break:break-all; font-size:12px; color:#94a3b8;" id="refLink">...</div>
-    <button class="btn-primary" onclick="shareRef()">📤 مشاركة عبر تلغرام</button>
-    <div class="stats-row">
-      <div class="stat-box"><div class="num">5%</div><div class="lbl">المستوى 1</div></div>
-      <div class="stat-box"><div class="num">3%</div><div class="lbl">المستوى 2</div></div>
-      <div class="stat-box"><div class="num">+0.01</div><div class="lbl">لكل صديق</div></div>
+  <div class="tabs-bar">
+    <button class="active" id="friendTab-referrals" onclick="switchFriendTab('referrals')">👥 الإحالات</button>
+    <button id="friendTab-ambassadors" onclick="switchFriendTab('ambassadors')">👑 السفراء</button>
+  </div>
+
+  <div id="friends-referrals">
+    <div class="card">
+      <div class="balance-label">رابط الإحالة الخاص بك</div>
+      <div class="ref-link-box" id="refLink">...</div>
+      <button class="btn-primary" onclick="shareRef()">📤 مشاركة عبر تلغرام</button>
+    </div>
+
+    <div class="stats-row" style="margin:0 12px;">
+      <div class="stat-box"><div class="num" id="activeRefs">0</div><div class="lbl">صديق نشط</div></div>
+      <div class="stat-box"><div class="num" id="pendingRefs">0</div><div class="lbl">صديق معلق</div></div>
+      <div class="stat-box"><div class="num" id="refEarnings">0.0000</div><div class="lbl">أرباح الإحالة</div></div>
+    </div>
+
+    <div class="stats-row" style="margin:10px 12px;">
+      <div class="stat-box"><div class="num" style="color:#0ea5e9;">L1: <span id="l1Earn">0.0000</span></div><div class="lbl">المستوى الأول (5%)</div></div>
+      <div class="stat-box"><div class="num" style="color:#8b5cf6;">L2: <span id="l2Earn">0.0000</span></div><div class="lbl">المستوى الثاني (3%)</div></div>
+    </div>
+
+    <div class="section-title">👥 قائمة الأصدقاء المدعوين</div>
+    <div id="friendsList" style="padding-bottom:20px;"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div></div>
+  </div>
+
+  <div id="friends-ambassadors" style="display:none;">
+    <div class="card">
+      <div class="section-title" style="padding:0; text-align:center;">👑 برنامج السفراء</div>
+      <div style="text-align:center; margin-top:12px; color:#94a3b8; font-size:12px;">قدم قناتك واربح على كل مطالبة</div>
+      <div style="text-align:center; margin-top:12px;"><button class="btn-primary" onclick="alert('قريباً')">⚡ التقديم كسفير</button></div>
     </div>
   </div>
 </div>
 
-<!-- ================= ACCOUNT ================= -->
 <div class="tab-content" id="tab-account">
   <div class="card">
     <div class="balance-label">معلومات الحساب</div>
-    <div style="text-align:center; margin:16px 0;">
-      <div style="font-size:20px; font-weight:bold;" id="accName">...</div>
-      <div style="color:#94a3b8; font-size:13px;" id="accUsername">...</div>
+    <div style="text-align:center; margin:12px 0;">
+      <div style="font-size:16px; font-weight:bold;" id="accName">...</div>
+      <div style="color:#94a3b8; font-size:11px;" id="accUsername">...</div>
     </div>
   </div>
   <div class="ad-network"><div><div class="name">🔗 ربط محفظة TON</div><div class="reward">قريباً</div></div></div>
   <div class="ad-network"><div><div class="name">🌐 اللغة</div><div class="reward">العربية</div></div></div>
 </div>
 
-<!-- ================= CONTEST ================= -->
 <div class="tab-content" id="tab-contest">
   <div class="card">
     <div class="section-title" style="padding:0; text-align:center;">🏆 المسابقة الأسبوعية</div>
-    <div style="text-align:center; margin-top:16px; color:#94a3b8; font-size:14px;">جوائز بقيمة 5$ كل أسبوع</div>
+    <div style="text-align:center; margin-top:12px; color:#94a3b8; font-size:12px;">جوائز بقيمة 5$ كل أسبوع</div>
   </div>
 </div>
 
@@ -211,7 +192,6 @@ const API_URL = 'https://paidhub-backend.vercel.app';
 
 var tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { try { tg.ready(); tg.expand(); } catch(e){} }
-
 var supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 var currentUser = null;
 
@@ -222,7 +202,8 @@ function showTabByName(name) {
   for (var i = 0; i < navs.length; i++) navs[i].classList.remove('active');
   var target = document.getElementById('tab-' + name);
   if (target) target.classList.add('active');
-  event.currentTarget.classList.add('active');
+  if (event && event.currentTarget && event.currentTarget.classList) event.currentTarget.classList.add('active');
+  if (name === 'friends' && currentUser) loadFriends(currentUser.id);
 }
 
 function switchTaskTab(name) {
@@ -234,23 +215,26 @@ function switchTaskTab(name) {
   document.getElementById('taskTab-vip').classList.toggle('active', name === 'vip');
 }
 
+function switchFriendTab(name) {
+  document.getElementById('friends-referrals').style.display = name === 'referrals' ? 'block' : 'none';
+  document.getElementById('friends-ambassadors').style.display = name === 'ambassadors' ? 'block' : 'none';
+  document.getElementById('friendTab-referrals').classList.toggle('active', name === 'referrals');
+  document.getElementById('friendTab-ambassadors').classList.toggle('active', name === 'ambassadors');
+}
+
 function startResetTimer() {
   setInterval(function() {
-    var now = new Date();
-    var midnight = new Date();
-    midnight.setHours(24, 0, 0, 0);
+    var now = new Date(); var midnight = new Date(); midnight.setHours(24,0,0,0);
     var diff = midnight - now;
-    var h = Math.floor(diff / 3600000);
-    var m = Math.floor((diff % 3600000) / 60000);
-    var s = Math.floor((diff % 60000) / 1000);
+    var h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
     var el = document.getElementById('resetTimer');
-    if (el) el.innerText = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    if (el) el.innerText = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
   }, 1000);
 }
 
 async function init() {
   var u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
-  if (!u) { return; }
+  if (!u) return;
   document.getElementById('userName').innerText = u.first_name || 'User';
   document.getElementById('userAvatar').innerText = (u.first_name || 'U')[0].toUpperCase();
   document.getElementById('accName').innerText = u.first_name || 'User';
@@ -266,107 +250,80 @@ async function loadUser(telegramId) {
     currentUser = res.data;
     document.getElementById('userBalance').innerText = (res.data.balance || 0).toFixed(4);
     document.getElementById('refLink').innerText = 'https://t.me/PaidHubEarn_Bot?start=' + res.data.referral_code;
-
     var daily = res.data.daily_views_count || 0;
-    var weekly = res.data.weekly_views_count || 0;
-    var mult = res.data.multiplier || 1.00;
     document.getElementById('dailyCounter').innerText = daily + ' / 50';
-    document.getElementById('dailyProgress').style.width = Math.min((daily / 50) * 100, 100) + '%';
-    document.getElementById('weeklyViews').innerText = weekly;
-    document.getElementById('multiplierDisplay').innerText = 'x' + parseFloat(mult).toFixed(2);
-
+    document.getElementById('dailyProgress').style.width = Math.min((daily/50)*100, 100) + '%';
+    document.getElementById('weeklyViews').innerText = res.data.weekly_views_count || 0;
+    document.getElementById('multiplierDisplay').innerText = 'x' + parseFloat(res.data.multiplier || 1).toFixed(2);
+    document.getElementById('activeRefs').innerText = res.data.referrals_l1_count || 0;
+    document.getElementById('task-ref-progress').innerText = (res.data.referrals_l1_count || 0) + ' / 3';
     updateTasksUI(res.data);
   }
 }
 
 function updateTasksUI(data) {
-  var dailyLogin = document.getElementById('btn-daily-login');
+  var btn = document.getElementById('btn-daily-login');
   if (data.last_login_reward) {
     var last = new Date(data.last_login_reward).toISOString().split('T')[0];
     var today = new Date().toISOString().split('T')[0];
-    if (last === today) {
-      dailyLogin.innerText = '✓ تم';
-      dailyLogin.classList.add('success');
-      dailyLogin.disabled = true;
-    } else {
-      dailyLogin.innerText = 'استلام';
-      dailyLogin.classList.remove('success');
-      dailyLogin.disabled = false;
-    }
+    if (last === today) { btn.innerText = '✓ تم'; btn.classList.add('success'); btn.disabled = true; }
+    else { btn.innerText = 'استلام'; btn.classList.remove('success'); btn.disabled = false; }
   }
+  var wp = document.getElementById('task-watch-progress');
+  if (wp) wp.innerText = Math.min(data.daily_views_count || 0, 5) + ' / 5';
+}
 
-  var watchProg = document.getElementById('task-watch-progress');
-  if (watchProg) watchProg.innerText = Math.min(data.daily_views_count || 0, 5) + ' / 5';
-
-  var watchBtn = document.getElementById('btn-daily-watch');
-  if ((data.daily_views_count || 0) >= 5) {
-    if (data.last_watch_reward && new Date(data.last_watch_reward).toISOString().split('T')[0] === new Date().toISOString().split('T')[0]) {
-      watchBtn.innerText = '✓ تم';
-      watchBtn.classList.add('success');
-      watchBtn.disabled = true;
-    } else {
-      watchBtn.innerText = 'استلام';
-      watchBtn.disabled = false;
-    }
+async function loadFriends(userId) {
+  var listEl = document.getElementById('friendsList');
+  if (!listEl) return;
+  var res = await supabase.from('profiles').select('first_name, username, created_at, daily_views_count').eq('referred_by', userId).order('created_at', { ascending: false });
+  if (!res.data || res.data.length === 0) {
+    listEl.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لم تقم بدعوة أي صديق بعد.</div>';
+    return;
   }
+  var active = 0, pending = 0, html = '';
+  for (var i = 0; i < res.data.length; i++) {
+    var f = res.data[i];
+    var isActive = (f.daily_views_count || 0) >= 10;
+    if (isActive) active++; else pending++;
+    var name = f.first_name || (f.username ? '@' + f.username : 'User');
+    html += '<div class="friend-row"><div><div class="friend-name">' + name + '</div><div class="friend-status ' + (isActive ? 'active' : 'pending') + '">' + (isActive ? '✅ نشط' : '⏳ معلق') + '</div></div><div style="color:#10b981; font-size:11px;">' + (isActive ? '+0.01' : '0.00') + '</div></div>';
+  }
+  listEl.innerHTML = html;
+  document.getElementById('activeRefs').innerText = active;
+  document.getElementById('pendingRefs').innerText = pending;
+  var tx = await supabase.from('transactions').select('amount').eq('user_id', userId).in('type', ['referral_signup', 'referral_l1', 'referral_l2']);
+  var totalEarn = 0;
+  if (tx.data) for (var j = 0; j < tx.data.length; j++) totalEarn += parseFloat(tx.data[j].amount || 0);
+  document.getElementById('refEarnings').innerText = totalEarn.toFixed(4);
+  document.getElementById('l1Earn').innerText = '0.0000';
+  document.getElementById('l2Earn').innerText = '0.0000';
 }
 
 async function watchAd(network, reward) {
   if (!currentUser) { alert('الرجاء المحاولة لاحقاً'); return; }
   if (tg) tg.showAlert('سيتم فتح الإعلان...');
-  try {
-    await fetch(API_URL + '/api/ads?user_id=' + currentUser.telegram_id + '&reward=' + reward + '&network=' + network, { mode: 'no-cors' });
-  } catch(e) {}
+  try { await fetch(API_URL + '/api/ads?user_id=' + currentUser.telegram_id + '&reward=' + reward + '&network=' + network, { mode: 'no-cors' }); } catch(e) {}
   setTimeout(async () => {
     await loadUser(currentUser.telegram_id);
-    var daily = currentUser ? (currentUser.daily_views_count || 0) : 0;
-    if (daily >= 50) {
-      if (tg) tg.showAlert('⚠️ وصلت للحد اليومي (50 إعلان).');
-    } else {
-      if (tg) tg.showAlert('✅ تم إضافة المكافأة');
-    }
+    if ((currentUser.daily_views_count || 0) >= 50) { if (tg) tg.showAlert('⚠️ وصلت للحد اليومي.'); }
+    else { if (tg) tg.showAlert('✅ تم إضافة المكافأة'); }
   }, 900);
 }
 
-function openLink(url) {
-  if (tg) tg.openTelegramLink(url);
-  else window.open(url, '_blank');
-}
+function openLink(url) { if (tg) tg.openTelegramLink(url); else window.open(url, '_blank'); }
 
 async function claimDailyLogin() {
   if (!currentUser) return;
-  try {
-    await fetch(API_URL + '/api/tasks/claim?user_id=' + currentUser.telegram_id + '&task=daily_login', { mode: 'no-cors' });
-  } catch(e) {}
-  setTimeout(async () => { await loadUser(currentUser.telegram_id); if (tg) tg.showAlert('✅ تم استلام مكافأة تسجيل الدخول'); }, 900);
+  try { await fetch(API_URL + '/api/tasks/claim?user_id=' + currentUser.telegram_id + '&task=daily_login', { mode: 'no-cors' }); } catch(e) {}
+  setTimeout(async () => { await loadUser(currentUser.telegram_id); if (tg) tg.showAlert('✅ تم استلام المكافأة'); }, 900);
 }
 
 async function claimWatchTask() {
   if (!currentUser) return;
-  if ((currentUser.daily_views_count || 0) < 5) {
-    if (tg) tg.showAlert('تحتاج مشاهدة 5 إعلانات أولاً');
-    return;
-  }
-  try {
-    await fetch(API_URL + '/api/tasks/claim?user_id=' + currentUser.telegram_id + '&task=watch_5', { mode: 'no-cors' });
-  } catch(e) {}
+  if ((currentUser.daily_views_count || 0) < 5) { if (tg) tg.showAlert('تحتاج مشاهدة 5 إعلانات أولاً'); return; }
+  try { await fetch(API_URL + '/api/tasks/claim?user_id=' + currentUser.telegram_id + '&task=watch_5', { mode: 'no-cors' }); } catch(e) {}
   setTimeout(async () => { await loadUser(currentUser.telegram_id); if (tg) tg.showAlert('✅ تم استلام المكافأة'); }, 900);
-}
-
-async function claimChannelTask() {
-  if (!currentUser) return;
-  if (tg) tg.openTelegramLink('https://t.me/PaidHubEarn');
-  setTimeout(() => {
-    if (tg) tg.showAlert('بعد الانضمام، عد واضغط "تحقق"');
-  }, 1500);
-}
-
-async function claimGroupTask() {
-  if (!currentUser) return;
-  if (tg) tg.openTelegramLink('https://t.me/PaidHubEarn');
-  setTimeout(() => {
-    if (tg) tg.showAlert('بعد الانضمام، عد واضغط "تحقق"');
-  }, 1500);
 }
 
 function shareRef() {
