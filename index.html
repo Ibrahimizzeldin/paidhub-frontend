@@ -61,6 +61,16 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
 .tx-amount.positive { color:#10b981; }
 .tx-amount.negative { color:#ef4444; }
 .amb-input { width:100%; padding:11px; background:#0f172a; border:1px solid #1e293b; color:#fff; border-radius:9px; font-size:12px; outline:none; margin-top:6px; }
+.camp-card { background:linear-gradient(135deg,#1e3a5f,#0f172a); margin:6px 12px; padding:14px; border-radius:12px; border:1px solid #1e40af; }
+.camp-card .camp-title { font-size:13px; font-weight:bold; margin-bottom:4px; }
+.camp-card .camp-desc { color:#94a3b8; font-size:11px; margin-bottom:8px; line-height:1.5; }
+.camp-card .camp-stats { display:flex; justify-content:space-between; font-size:10px; color:#94a3b8; margin-bottom:8px; }
+.camp-card .camp-reward { color:#10b981; font-size:11px; font-weight:bold; }
+.progress-bar { height:5px; background:#0f172a; border-radius:5px; overflow:hidden; margin-bottom:8px; }
+.progress-bar-inner { height:100%; background:linear-gradient(90deg,#0ea5e9,#10b981); transition:width 0.3s; }
+.camp-input { width:100%; padding:11px; background:#0f172a; border:1px solid #1e293b; color:#fff; border-radius:9px; font-size:12px; outline:none; margin-top:6px; }
+.camp-type-btn { flex:1; padding:10px; border:none; background:#0f172a; color:#94a3b8; border-radius:9px; font-size:11px; cursor:pointer; font-weight:bold; }
+.camp-type-btn.active { background:#0ea5e9; color:#fff; }
 </style>
 </head>
 <body>
@@ -104,6 +114,9 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <div class="ad-network"><div><div class="name">Gigapub</div><div class="reward">💎 0.0004+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Gigapub',0.0004)">مشاهدة ▶</button></div>
   <div class="ad-network"><div><div class="name">Tads</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Tads',0.0002)">مشاهدة ▶</button></div>
   <div class="ad-network"><div><div class="name">Monetix</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Monetix',0.0002)">مشاهدة ▶</button></div>
+
+  <div class="section-title">📢 حملات الترويج النشطة</div>
+  <div id="campaignsList" style="padding-bottom:20px;"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div></div>
 </div>
 
 <div class="tab-content" id="tab-tasks">
@@ -124,8 +137,8 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <div id="tasks-vip" style="display:none;">
     <div class="ad-network"><div><div class="name">👑 TON Raids</div><div class="desc">مهام حصرية</div><div class="reward">💎 +0.0004</div></div><button class="ad-btn" onclick="openLink('https://t.me/tonraids')">انضم</button></div>
   </div>
-    </div>
-    <div class="tab-content" id="tab-friends">
+  </div>
+  <div class="tab-content" id="tab-friends">
   <div class="tabs-bar">
     <button class="active" id="friendTab-referrals" onclick="switchFriendTab('referrals')">👥 الإحالات</button>
     <button id="friendTab-ambassadors" onclick="switchFriendTab('ambassadors')">👑 السفراء</button>
@@ -236,24 +249,89 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <div id="leaderboard" style="padding-bottom:20px;"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div></div>
 </div>
 
+<div class="tab-content" id="tab-promote">
+  <div class="card">
+    <div class="section-title" style="padding:0; text-align:center;">📢 إنشاء حملة ترويجية</div>
+    <div style="text-align:center; margin-top:6px; color:#94a3b8; font-size:11px;">اجذب مشتركين حقيقيين لقناتك أو بوتك</div>
+
+    <div style="margin-top:14px;">
+      <div style="color:#94a3b8; font-size:11px; margin-bottom:6px;">نوع الهدف</div>
+      <div style="display:flex; gap:6px;">
+        <button class="camp-type-btn active" id="campTypeBtn-channel" onclick="setCampType('channel')">📢 قناة</button>
+        <button class="camp-type-btn" id="campTypeBtn-bot" onclick="setCampType('bot')">🤖 بوت</button>
+        <button class="camp-type-btn" id="campTypeBtn-mini_app" onclick="setCampType('mini_app')">⚡ Mini App</button>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div style="color:#94a3b8; font-size:11px;">رابط القناة أو البوت</div>
+      <input id="campLink" type="text" placeholder="https://t.me/your_channel" class="camp-input">
+    </div>
+
+    <div style="margin-top:12px;">
+      <div style="color:#94a3b8; font-size:11px;">عنوان الحملة</div>
+      <input id="campTitle" type="text" placeholder="مثال: قناة الأخبار العربية" class="camp-input">
+    </div>
+
+    <div style="margin-top:12px;">
+      <div style="color:#94a3b8; font-size:11px;">الوصف (اختياري)</div>
+      <input id="campDesc" type="text" placeholder="وصف مختصر" class="camp-input">
+    </div>
+
+    <div style="margin-top:12px;">
+      <div style="color:#94a3b8; font-size:11px;">عدد النقرات (الحد الأدنى 100)</div>
+      <div style="display:flex; gap:6px; margin-top:6px;">
+        <button class="camp-type-btn" onclick="setClicks(100)">100</button>
+        <button class="camp-type-btn" onclick="setClicks(250)">250</button>
+        <button class="camp-type-btn" onclick="setClicks(500)">500</button>
+        <button class="camp-type-btn" onclick="setClicks(1000)">1000</button>
+      </div>
+      <input id="campClicks" type="number" placeholder="عدد مخصص" class="camp-input">
+    </div>
+
+    <div style="background:#0f172a; padding:12px; border-radius:9px; margin-top:14px;">
+      <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px;">
+        <span style="color:#94a3b8;">سعر النقرة:</span>
+        <span style="color:#fff; font-weight:bold;">0.003 USDT</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px;">
+        <span style="color:#94a3b8;">مكافأة المشاهد:</span>
+        <span style="color:#10b981; font-weight:bold;">0.001 USDT</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:11px;">
+        <span style="color:#94a3b8;">التكلفة الإجمالية:</span>
+        <span style="color:#f59e0b; font-weight:bold;" id="campCost">0.0000 USDT</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" style="margin-top:12px;" onclick="createCampaign()">🚀 إنشاء الحملة</button>
+  </div>
+
+  <div class="section-title">📋 حملاتي</div>
+  <div id="myCampaigns" style="padding-bottom:20px;"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لا توجد حملات بعد.</div></div>
+</div>
+
 <div class="bottom-nav">
   <button class="nav-item" onclick="showTabByName('account')"><span class="icon">👤</span>الحساب</button>
-  <button class="nav-item" onclick="showTabByName('contest')"><span class="icon">🏆</span>المسابقة</button>
+  <button class="nav-item" onclick="showTabByName('promote')"><span class="icon">📢</span>ترويج</button>
   <button class="nav-item active" onclick="showTabByName('home')"><span class="icon">💰</span>PaidHub</button>
   <button class="nav-item" onclick="showTabByName('friends')"><span class="icon">👥</span>الأصدقاء</button>
   <button class="nav-item" onclick="showTabByName('tasks')"><span class="icon">📋</span>المهام</button>
-  </div>
-  <script>
+                                                                </div>
+                                                                <script>
 const SUPABASE_URL = 'https://xcvfhjsryxigupmlbcdu.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjdmZoanNyeXhpZ3VwbWxiY2R1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjE2NTcsImV4cCI6MjEwNjEzNzY1N30.tgB3YimnbCviQoeY10dEocbHvA4sePaJ83Sj_OlB8R0';
 const API_URL = 'https://paidhub-backend.vercel.app';
 const MANIFEST_URL = 'https://paidhub-frontend.vercel.app/tonconnect-manifest.json';
+const CPC = 0.003;
+const REWARD_PER_CLICK = 0.001;
 
 var tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { try { tg.ready(); tg.expand(); } catch(e){} }
 var supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 var currentUser = null;
 var currentContestType = 'ads';
+var currentCampType = 'channel';
 var tonConnectUI = null;
 
 function showTabByName(name) {
@@ -266,6 +344,8 @@ function showTabByName(name) {
   if (event && event.currentTarget && event.currentTarget.classList) event.currentTarget.classList.add('active');
   if (name === 'friends' && currentUser) { loadFriends(currentUser.id); loadMyAmbassador(); }
   if (name === 'contest') loadLeaderboard(currentContestType);
+  if (name === 'home') loadCampaigns();
+  if (name === 'promote') loadMyCampaigns();
 }
 
 function switchTaskTab(name) {
@@ -300,6 +380,24 @@ function switchContestTab(name) {
     document.getElementById('contestDesc').innerText = 'أفضل 3 سفراء يتقاسمون الجوائز';
   }
   loadLeaderboard(name);
+}
+
+function setCampType(type) {
+  currentCampType = type;
+  document.getElementById('campTypeBtn-channel').classList.toggle('active', type === 'channel');
+  document.getElementById('campTypeBtn-bot').classList.toggle('active', type === 'bot');
+  document.getElementById('campTypeBtn-mini_app').classList.toggle('active', type === 'mini_app');
+}
+
+function setClicks(n) {
+  document.getElementById('campClicks').value = n;
+  updateCampCost();
+}
+
+function updateCampCost() {
+  var c = parseInt(document.getElementById('campClicks').value || 0);
+  var cost = c * CPC;
+  document.getElementById('campCost').innerText = cost.toFixed(4) + ' USDT';
 }
 
 function startResetTimer() {
@@ -377,15 +475,15 @@ async function loadTransactions() {
     el.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لا توجد معاملات بعد.</div>';
     return;
   }
-  var labels = { ad_reward: 'مشاهدة إعلان', task_reward: 'مكافأة مهمة', referral_signup: 'إحالة جديدة', referral_l1: 'عمولة L1', referral_l2: 'عمولة L2', withdrawal: 'سحب' };
+  var labels = { ad_reward: 'مشاهدة إعلان', task_reward: 'مكافأة مهمة', referral_signup: 'إحالة جديدة', referral_l1: 'عمولة L1', referral_l2: 'عمولة L2', withdrawal: 'سحب', campaign_click: 'نقرة حملة', campaign_create: 'إنشاء حملة' };
   var html = '';
   for (var i = 0; i < res.data.length; i++) {
     var t = res.data[i];
     var typeLabel = labels[t.type] || t.type;
-    var isPositive = t.type !== 'withdrawal';
     var amt = parseFloat(t.amount || 0);
+    var isPositive = amt >= 0;
     var date = new Date(t.created_at).toLocaleString('ar-EG');
-    html += '<div class="tx-row"><div class="tx-info"><div class="tx-type">' + typeLabel + '</div><div class="tx-date">' + date + '</div></div><div class="tx-amount ' + (isPositive ? 'positive' : 'negative') + '">' + (isPositive ? '+' : '-') + amt.toFixed(4) + '</div></div>';
+    html += '<div class="tx-row"><div class="tx-info"><div class="tx-type">' + typeLabel + '</div><div class="tx-date">' + date + '</div></div><div class="tx-amount ' + (isPositive ? 'positive' : 'negative') + '">' + (isPositive ? '+' : '') + amt.toFixed(4) + '</div></div>';
   }
   el.innerHTML = html;
 }
@@ -423,6 +521,99 @@ async function loadMyAmbassador() {
   document.getElementById('ambEarnings').innerText = ((a.claims_count || 0) * 0.0005).toFixed(4);
 }
 
+async function loadCampaigns() {
+  if (!supabase) return;
+  var el = document.getElementById('campaignsList');
+  if (!el) return;
+  var res = await supabase.from('campaigns').select('*').eq('status', 'active').order('created_at', { ascending: false }).limit(20);
+  if (!res.data || res.data.length === 0) {
+    el.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لا توجد حملات نشطة حالياً.</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < res.data.length; i++) {
+    var c = res.data[i];
+    var done = c.clicks_done || 0;
+    var total = c.clicks_total || 1;
+    var pct = Math.min((done / total) * 100, 100);
+    var icon = c.target_type === 'bot' ? '🤖' : (c.target_type === 'mini_app' ? '⚡' : '📢');
+    html += '<div class="camp-card"><div class="camp-title">' + icon + ' ' + (c.title || 'حملة') + '</div>' +
+      (c.description ? '<div class="camp-desc">' + c.description + '</div>' : '') +
+      '<div class="camp-stats"><span>التقدم: ' + done + ' / ' + total + '</span><span class="camp-reward">💎 +' + REWARD_PER_CLICK.toFixed(4) + ' USDT</span></div>' +
+      '<div class="progress-bar"><div class="progress-bar-inner" style="width:' + pct + '%"></div></div>' +
+      '<button class="btn-primary" onclick="clickCampaign(\'' + c.id + '\',\'' + (c.target_link || '') + '\')">مشاهدة ▶</button></div>';
+  }
+  el.innerHTML = html;
+}
+
+async function clickCampaign(campaignId, link) {
+  if (!currentUser) { if (tg) tg.showAlert('الرجاء فتح التطبيق من تلغرام'); return; }
+  if (link && tg) { try { tg.openTelegramLink(link); } catch(e) {} }
+  try { await fetch(API_URL + '/api/campaigns/click?user_id=' + currentUser.telegram_id + '&campaign_id=' + campaignId, { mode: 'no-cors' }); } catch(e) {}
+  setTimeout(async function() {
+    await loadUser(currentUser.telegram_id);
+    await loadCampaigns();
+    if (tg) tg.showAlert('✅ تم إضافة ' + REWARD_PER_CLICK.toFixed(4) + ' USDT');
+  }, 1200);
+}
+
+async function createCampaign() {
+  if (!currentUser) { if (tg) tg.showAlert('الرجاء فتح التطبيق من تلغرام'); return; }
+  var link = document.getElementById('campLink').value.trim();
+  var title = document.getElementById('campTitle').value.trim();
+  var desc = document.getElementById('campDesc').value.trim();
+  var clicks = parseInt(document.getElementById('campClicks').value || 0);
+
+  if (!link || link.indexOf('t.me/') === -1) { if (tg) tg.showAlert('أدخل رابط قناة/بوت صحيح'); return; }
+  if (!clicks || clicks < 100) { if (tg) tg.showAlert('الحد الأدنى 100 نقرة'); return; }
+
+  var cost = clicks * CPC;
+  if (parseFloat(currentUser.balance || 0) < cost) {
+    if (tg) tg.showAlert('رصيدك غير كافٍ. تحتاج ' + cost.toFixed(4) + ' USDT');
+    return;
+  }
+
+  if (tg) tg.showAlert('جاري إنشاء الحملة...');
+  try { await fetch(API_URL + '/api/campaigns/create?user_id=' + currentUser.telegram_id + '&target_type=' + currentCampType + '&target_link=' + encodeURIComponent(link) + '&title=' + encodeURIComponent(title || 'حملة ترويجية') + '&description=' + encodeURIComponent(desc) + '&clicks=' + clicks, { mode: 'no-cors' }); } catch(e) {}
+
+  setTimeout(async function() {
+    await loadUser(currentUser.telegram_id);
+    await loadMyCampaigns();
+    await loadCampaigns();
+    document.getElementById('campLink').value = '';
+    document.getElementById('campTitle').value = '';
+    document.getElementById('campDesc').value = '';
+    document.getElementById('campClicks').value = '';
+    document.getElementById('campCost').innerText = '0.0000 USDT';
+    if (tg) tg.showAlert('✅ تم إنشاء الحملة بنجاح');
+  }, 1200);
+}
+
+async function loadMyCampaigns() {
+  if (!currentUser || !supabase) return;
+  var el = document.getElementById('myCampaigns');
+  if (!el) return;
+  var res = await supabase.from('campaigns').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(20);
+  if (!res.data || res.data.length === 0) {
+    el.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لا توجد حملات بعد.</div>';
+    return;
+  }
+  var statusLabel = { active: '🟢 نشطة', completed: '✅ مكتملة', paused: '⏸ موقوفة' };
+  var html = '';
+  for (var i = 0; i < res.data.length; i++) {
+    var c = res.data[i];
+    var done = c.clicks_done || 0;
+    var total = c.clicks_total || 1;
+    var pct = Math.min((done / total) * 100, 100);
+    var icon = c.target_type === 'bot' ? '🤖' : (c.target_type === 'mini_app' ? '⚡' : '📢');
+    html += '<div class="camp-card"><div class="camp-title">' + icon + ' ' + (c.title || 'حملة') + '</div>' +
+      '<div class="camp-stats"><span>' + (statusLabel[c.status] || c.status) + '</span><span>' + done + ' / ' + total + '</span></div>' +
+      '<div class="progress-bar"><div class="progress-bar-inner" style="width:' + pct + '%"></div></div>' +
+      '<div class="camp-stats"><span>التكلفة: ' + parseFloat(c.cost || 0).toFixed(4) + ' USDT</span><span class="camp-reward">+' + REWARD_PER_CLICK.toFixed(4) + ' / نقرة</span></div></div>';
+  }
+  el.innerHTML = html;
+}
+
 async function init() {
   var u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
   if (!u) return;
@@ -434,6 +625,9 @@ async function init() {
   await loadUser(u.id);
   initTonConnect();
   updateWalletUI();
+  loadCampaigns();
+  var clicksInput = document.getElementById('campClicks');
+  if (clicksInput) clicksInput.addEventListener('input', updateCampCost);
 }
 
 async function loadUser(telegramId) {
