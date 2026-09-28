@@ -159,11 +159,11 @@ body { background: #0f172a; color: #fff; padding-bottom: 80px; min-height: 100vh
 
 <!-- Bottom Nav -->
 <div class="bottom-nav">
-  <button class="nav-item" onclick="switchTab('account')"><span class="icon">👤</span>الحساب</button>
-  <button class="nav-item" onclick="switchTab('contest')"><span class="icon">🏆</span>المسابقة</button>
-  <button class="nav-item active" onclick="switchTab('home')"><span class="icon">💰</span>PaidHub</button>
-  <button class="nav-item" onclick="switchTab('friends')"><span class="icon">👥</span>الأصدقاء</button>
-  <button class="nav-item" onclick="switchTab('tasks')"><span class="icon">📋</span>المهام</button>
+  <button class="nav-item" onclick="switchTab('account', this)"><span class="icon">👤</span>الحساب</button>
+  <button class="nav-item" onclick="switchTab('contest', this)"><span class="icon">🏆</span>المسابقة</button>
+  <button class="nav-item active" onclick="switchTab('home', this)"><span class="icon">💰</span>PaidHub</button>
+  <button class="nav-item" onclick="switchTab('friends', this)"><span class="icon">👥</span>الأصدقاء</button>
+  <button class="nav-item" onclick="switchTab('tasks', this)"><span class="icon">📋</span>المهام</button>
 </div>
 
 <script>
@@ -188,7 +188,6 @@ async function init() {
   document.getElementById('accName').innerText = u.first_name || 'User';
   document.getElementById('accUsername').innerText = '@' + (u.username || 'user');
 
-  // Register user in DB via backend
   try {
     await fetch(`${API_URL}/api/user?telegram_id=${u.id}`);
   } catch(e) { console.log(e); }
@@ -206,19 +205,16 @@ async function loadUser(telegramId) {
   }
 }
 
-function switchTab(name) {
+function switchTab(name, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  event.currentTarget.classList.add('active');
+  if (el) el.classList.add('active');
 }
 
 async function watchAd(network, reward) {
   if (!currentUser) return alert('الرجاء المحاولة لاحقاً');
   tg.showAlert('سيتم فتح الإعلان...');
-  // This is a placeholder. In production, you call the ad network's API.
-  // After the ad network confirms via postback, your backend adds the reward.
-  // For demo purposes:
   try {
     const res = await fetch(`${API_URL}/api/ads?user_id=${currentUser.telegram_id}&reward=${reward}&network=${network}`);
     if (res.ok) {
@@ -242,4 +238,4 @@ init();
 </script>
 
 </body>
-  </html>
+    </html>
