@@ -45,8 +45,16 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
 .friend-row .friend-status { font-size:10px; color:#94a3b8; }
 .friend-row .friend-status.active { color:#10b981; }
 .friend-row .friend-status.pending { color:#f59e0b; }
-       </style>
-       </head>
+.rank-row { display:flex; align-items:center; gap:10px; padding:10px 12px; background:#1e293b; margin:5px 12px; border-radius:10px; }
+.rank-row.top1 { background:linear-gradient(90deg,#78350f,#1e293b); }
+.rank-row.top2 { background:linear-gradient(90deg,#334155,#1e293b); }
+.rank-row.top3 { background:linear-gradient(90deg,#7c2d12,#1e293b); }
+.rank-pos { width:24px; text-align:center; font-weight:bold; font-size:13px; color:#f59e0b; }
+.rank-name { flex:1; font-size:12px; font-weight:bold; }
+.rank-score { color:#10b981; font-size:12px; font-weight:bold; }
+.rank-sub { color:#94a3b8; font-size:10px; }
+</style>
+</head>
 <body>
 
 <div class="header">
@@ -120,7 +128,6 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
     <div class="ad-network"><div><div class="name">👑 TON Raids</div><div class="desc">مهام حصرية</div><div class="reward">💎 +0.0004</div></div><button class="ad-btn" onclick="openLink('https://t.me/tonraids')">انضم</button></div>
   </div>
 </div>
-
 <div class="tab-content" id="tab-friends">
   <div class="tabs-bar">
     <button class="active" id="friendTab-referrals" onclick="switchFriendTab('referrals')">👥 الإحالات</button>
@@ -171,9 +178,32 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
 </div>
 
 <div class="tab-content" id="tab-contest">
+  <div class="tabs-bar">
+    <button class="active" id="contestTab-ads" onclick="switchContestTab('ads')">📺 الإعلانات</button>
+    <button id="contestTab-refs" onclick="switchContestTab('refs')">👥 الإحالات</button>
+    <button id="contestTab-amb" onclick="switchContestTab('amb')">👑 السفراء</button>
+  </div>
+
   <div class="card">
-    <div class="section-title" style="padding:0; text-align:center;">🏆 المسابقة الأسبوعية</div>
-    <div style="text-align:center; margin-top:12px; color:#94a3b8; font-size:12px;">جوائز بقيمة 5$ كل أسبوع</div>
+    <div style="text-align:center; margin-bottom:12px;">
+      <div style="font-size:13px; font-weight:bold;" id="contestTitle">🏆 مسابقة الإعلانات</div>
+      <div style="color:#94a3b8; font-size:11px; margin-top:4px;" id="contestDesc">مشاهدة الإعلانات وتصدر لوحة الصدارة</div>
+    </div>
+    <div style="display:flex; justify-content:space-between;">
+      <div style="text-align:center; flex:1;">
+        <div style="color:#f59e0b; font-size:14px; font-weight:bold;">5 USDT</div>
+        <div style="color:#94a3b8; font-size:10px;">مجموع الجوائز</div>
+      </div>
+      <div style="text-align:center; flex:1;">
+        <div style="color:#10b981; font-size:14px; font-weight:bold;" id="contestTimer">--:--:--</div>
+        <div style="color:#94a3b8; font-size:10px;">تنتهي بعد</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">🥇 أفضل 10</div>
+  <div id="leaderboard" style="padding-bottom:20px;">
+    <div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div>
   </div>
 </div>
 
@@ -184,7 +214,6 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <button class="nav-item" onclick="showTabByName('friends')"><span class="icon">👥</span>الأصدقاء</button>
   <button class="nav-item" onclick="showTabByName('tasks')"><span class="icon">📋</span>المهام</button>
 </div>
-
 <script>
 const SUPABASE_URL = 'https://xcvfhjsryxigupmlbcdu.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjdmZoanNyeXhpZ3VwbWxiY2R1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjE2NTcsImV4cCI6MjEwNjEzNzY1N30.tgB3YimnbCviQoeY10dEocbHvA4sePaJ83Sj_OlB8R0';
@@ -194,6 +223,7 @@ var tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { try { tg.ready(); tg.expand(); } catch(e){} }
 var supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 var currentUser = null;
+var currentContestType = 'ads';
 
 function showTabByName(name) {
   var tabs = document.querySelectorAll('.tab-content');
@@ -204,6 +234,7 @@ function showTabByName(name) {
   if (target) target.classList.add('active');
   if (event && event.currentTarget && event.currentTarget.classList) event.currentTarget.classList.add('active');
   if (name === 'friends' && currentUser) loadFriends(currentUser.id);
+  if (name === 'contest') loadLeaderboard(currentContestType);
 }
 
 function switchTaskTab(name) {
@@ -222,6 +253,24 @@ function switchFriendTab(name) {
   document.getElementById('friendTab-ambassadors').classList.toggle('active', name === 'ambassadors');
 }
 
+function switchContestTab(name) {
+  currentContestType = name;
+  document.getElementById('contestTab-ads').classList.toggle('active', name === 'ads');
+  document.getElementById('contestTab-refs').classList.toggle('active', name === 'refs');
+  document.getElementById('contestTab-amb').classList.toggle('active', name === 'amb');
+  if (name === 'ads') {
+    document.getElementById('contestTitle').innerText = '🏆 مسابقة الإعلانات';
+    document.getElementById('contestDesc').innerText = 'مشاهدة الإعلانات وتصدر لوحة الصدارة';
+  } else if (name === 'refs') {
+    document.getElementById('contestTitle').innerText = '🏆 مسابقة الإحالات';
+    document.getElementById('contestDesc').innerText = 'ادعُ أصدقاءك وتصدر اللوحة';
+  } else {
+    document.getElementById('contestTitle').innerText = '🏆 بطولة السفراء';
+    document.getElementById('contestDesc').innerText = 'أفضل 3 سفراء يتقاسمون الجوائز';
+  }
+  loadLeaderboard(name);
+}
+
 function startResetTimer() {
   setInterval(function() {
     var now = new Date(); var midnight = new Date(); midnight.setHours(24,0,0,0);
@@ -229,6 +278,8 @@ function startResetTimer() {
     var h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
     var el = document.getElementById('resetTimer');
     if (el) el.innerText = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    var ct = document.getElementById('contestTimer');
+    if (ct) ct.innerText = String(h).padStart(2,'0')+'h '+String(m).padStart(2,'0')+'m';
   }, 1000);
 }
 
@@ -300,6 +351,35 @@ async function loadFriends(userId) {
   document.getElementById('l2Earn').innerText = '0.0000';
 }
 
+async function loadLeaderboard(type) {
+  var el = document.getElementById('leaderboard');
+  if (!el) return;
+  el.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div>';
+
+  var field = 'weekly_views_count';
+  var subfield = 'إعلان';
+  if (type === 'refs') { field = 'referrals_l1_count'; subfield = 'إحالة'; }
+  else if (type === 'amb') { field = 'referrals_l1_count'; subfield = 'دعوة'; }
+
+  var res = await supabase.from('profiles').select('first_name, username, weekly_views_count, referrals_l1_count, total_views_count').order(field, { ascending: false }).limit(10);
+  if (!res.data || res.data.length === 0) {
+    el.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لا يوجد متصدرون بعد.</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < res.data.length; i++) {
+    var p = res.data[i];
+    var val = type === 'ads' ? (p.weekly_views_count || 0) : (p.referrals_l1_count || 0);
+    var reward = 0;
+    if (i === 0) reward = 2.50; else if (i === 1) reward = 1.50; else if (i === 2) reward = 1.00;
+    else if (i < 10) reward = 0.10;
+    var name = p.first_name || (p.username ? '@' + p.username : 'User');
+    var cls = i === 0 ? 'top1' : (i === 1 ? 'top2' : (i === 2 ? 'top3' : ''));
+    html += '<div class="rank-row ' + cls + '"><div class="rank-pos">' + (i + 1) + '</div><div class="rank-name">' + name + '<div class="rank-sub">' + val + ' ' + subfield + '</div></div><div class="rank-score">+' + reward.toFixed(2) + '</div></div>';
+  }
+  el.innerHTML = html;
+}
+
 async function watchAd(network, reward) {
   if (!currentUser) { alert('الرجاء المحاولة لاحقاً'); return; }
   if (tg) tg.showAlert('سيتم فتح الإعلان...');
@@ -338,4 +418,4 @@ init();
 </script>
 
 </body>
-  </html>
+</html>
