@@ -6,6 +6,7 @@
 <title>PaidHubEarn</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; -webkit-tap-highlight-color:transparent; }
 body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; font-size:13px; }
@@ -53,6 +54,12 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
 .rank-name { flex:1; font-size:12px; font-weight:bold; }
 .rank-score { color:#10b981; font-size:12px; font-weight:bold; }
 .rank-sub { color:#94a3b8; font-size:10px; }
+.tx-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:#1e293b; margin:5px 12px; border-radius:10px; }
+.tx-info .tx-type { font-weight:bold; font-size:12px; }
+.tx-info .tx-date { color:#94a3b8; font-size:10px; margin-top:2px; }
+.tx-amount { font-weight:bold; font-size:12px; }
+.tx-amount.positive { color:#10b981; }
+.tx-amount.negative { color:#ef4444; }
 </style>
 </head>
 <body>
@@ -127,8 +134,8 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <div id="tasks-vip" style="display:none;">
     <div class="ad-network"><div><div class="name">👑 TON Raids</div><div class="desc">مهام حصرية</div><div class="reward">💎 +0.0004</div></div><button class="ad-btn" onclick="openLink('https://t.me/tonraids')">انضم</button></div>
   </div>
-</div>
-<div class="tab-content" id="tab-friends">
+  </div>
+  <div class="tab-content" id="tab-friends">
   <div class="tabs-bar">
     <button class="active" id="friendTab-referrals" onclick="switchFriendTab('referrals')">👥 الإحالات</button>
     <button id="friendTab-ambassadors" onclick="switchFriendTab('ambassadors')">👑 السفراء</button>
@@ -173,8 +180,40 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
       <div style="color:#94a3b8; font-size:11px;" id="accUsername">...</div>
     </div>
   </div>
-  <div class="ad-network"><div><div class="name">🔗 ربط محفظة TON</div><div class="reward">قريباً</div></div></div>
-  <div class="ad-network"><div><div class="name">🌐 اللغة</div><div class="reward">العربية</div></div></div>
+
+  <div class="ad-network">
+    <div>
+      <div class="name">🔗 ربط محفظة TON</div>
+      <div class="desc" id="walletStatus">لم يتم الربط بعد</div>
+      <div class="reward" id="walletAddress"></div>
+    </div>
+    <button class="ad-btn" id="btnConnectWallet" onclick="toggleWallet()">ربط</button>
+  </div>
+
+  <div class="ad-network">
+    <div>
+      <div class="name">📜 سجل المعاملات</div>
+      <div class="desc">آخر 20 معاملة</div>
+    </div>
+    <button class="ad-btn" onclick="showTransactions()">فتح</button>
+  </div>
+
+  <div class="ad-network">
+    <div>
+      <div class="name">🔔 الإشعارات</div>
+      <div class="desc">تنبيهات المكافآت والمسابقات</div>
+    </div>
+    <button class="ad-btn success" id="btnNotifications" onclick="toggleNotifications()">مفعّل</button>
+  </div>
+
+  <div class="ad-network">
+    <div><div class="name">🌐 اللغة</div><div class="reward">العربية</div></div>
+  </div>
+
+  <div id="transactionsBox" style="display:none; padding-bottom:20px;">
+    <div class="section-title">📜 سجل المعاملات</div>
+    <div id="txList"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div></div>
+  </div>
 </div>
 
 <div class="tab-content" id="tab-contest">
@@ -218,12 +257,14 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
 const SUPABASE_URL = 'https://xcvfhjsryxigupmlbcdu.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjdmZoanNyeXhpZ3VwbWxiY2R1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjE2NTcsImV4cCI6MjEwNjEzNzY1N30.tgB3YimnbCviQoeY10dEocbHvA4sePaJ83Sj_OlB8R0';
 const API_URL = 'https://paidhub-backend.vercel.app';
+const MANIFEST_URL = 'https://paidhub-frontend.vercel.app/tonconnect-manifest.json';
 
 var tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { try { tg.ready(); tg.expand(); } catch(e){} }
 var supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 var currentUser = null;
 var currentContestType = 'ads';
+var tonConnectUI = null;
 
 function showTabByName(name) {
   var tabs = document.querySelectorAll('.tab-content');
@@ -283,6 +324,102 @@ function startResetTimer() {
   }, 1000);
 }
 
+function initTonConnect() {
+  if (!window.TON_CONNECT_UI) return;
+  try {
+    tonConnectUI = new TON_CONNECT_UI.TonConnectUI({ manifestUrl: MANIFEST_URL });
+    tonConnectUI.onStatusChange(function(wallet) {
+      if (wallet && wallet.account && wallet.account.address) {
+        var addr = wallet.account.address;
+        saveWallet(addr);
+      }
+    });
+  } catch(e) { console.log('TON Connect error:', e); }
+}
+
+async function saveWallet(address) {
+  if (!currentUser || !supabase) return;
+  await supabase.from('profiles').update({ ton_wallet: address }).eq('id', currentUser.id);
+  currentUser.ton_wallet = address;
+  updateWalletUI();
+}
+
+function updateWalletUI() {
+  var status = document.getElementById('walletStatus');
+  var addrEl = document.getElementById('walletAddress');
+  var btn = document.getElementById('btnConnectWallet');
+  if (currentUser && currentUser.ton_wallet) {
+    status.innerText = '✅ محفظة مربوطة';
+    var short = currentUser.ton_wallet.substring(0, 6) + '...' + currentUser.ton_wallet.substring(currentUser.ton_wallet.length - 4);
+    addrEl.innerText = short;
+    btn.innerText = 'فصل';
+    btn.classList.add('success');
+  } else {
+    status.innerText = 'لم يتم الربط بعد';
+    addrEl.innerText = '';
+    btn.innerText = 'ربط';
+    btn.classList.remove('success');
+  }
+}
+
+async function toggleWallet() {
+  if (!tonConnectUI) { if (tg) tg.showAlert('جاري التحميل...'); return; }
+  if (currentUser && currentUser.ton_wallet) {
+    await tonConnectUI.disconnect();
+    if (supabase) await supabase.from('profiles').update({ ton_wallet: null }).eq('id', currentUser.id);
+    if (currentUser) currentUser.ton_wallet = null;
+    updateWalletUI();
+    if (tg) tg.showAlert('تم فصل المحفظة');
+  } else {
+    tonConnectUI.openModal();
+  }
+}
+
+function showTransactions() {
+  var box = document.getElementById('transactionsBox');
+  if (box.style.display === 'none') {
+    box.style.display = 'block';
+    loadTransactions();
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+async function loadTransactions() {
+  if (!currentUser || !supabase) return;
+  var el = document.getElementById('txList');
+  var res = await supabase.from('transactions').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(20);
+  if (!res.data || res.data.length === 0) {
+    el.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لا توجد معاملات بعد.</div>';
+    return;
+  }
+  var labels = { ad_reward: 'مشاهدة إعلان', task_reward: 'مكافأة مهمة', referral_signup: 'إحالة جديدة', referral_l1: 'عمولة L1', referral_l2: 'عمولة L2', withdrawal: 'سحب' };
+  var html = '';
+  for (var i = 0; i < res.data.length; i++) {
+    var t = res.data[i];
+    var typeLabel = labels[t.type] || t.type;
+    var isPositive = t.type !== 'withdrawal';
+    var amt = parseFloat(t.amount || 0);
+    var date = new Date(t.created_at).toLocaleString('ar-EG');
+    html += '<div class="tx-row"><div class="tx-info"><div class="tx-type">' + typeLabel + '</div><div class="tx-date">' + date + '</div></div><div class="tx-amount ' + (isPositive ? 'positive' : 'negative') + '">' + (isPositive ? '+' : '-') + amt.toFixed(4) + '</div></div>';
+  }
+  el.innerHTML = html;
+}
+
+function toggleNotifications() {
+  var btn = document.getElementById('btnNotifications');
+  var enabled = btn.classList.contains('success');
+  if (enabled) {
+    btn.classList.remove('success');
+    btn.classList.add('disabled');
+    btn.innerText = 'معطّل';
+  } else {
+    btn.classList.add('success');
+    btn.classList.remove('disabled');
+    btn.innerText = 'مفعّل';
+  }
+}
+
 async function init() {
   var u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
   if (!u) return;
@@ -292,6 +429,8 @@ async function init() {
   document.getElementById('accUsername').innerText = '@' + (u.username || 'user');
   try { await fetch(API_URL + '/api/user?telegram_id=' + u.id); } catch(e) {}
   await loadUser(u.id);
+  initTonConnect();
+  updateWalletUI();
 }
 
 async function loadUser(telegramId) {
@@ -309,6 +448,7 @@ async function loadUser(telegramId) {
     document.getElementById('activeRefs').innerText = res.data.referrals_l1_count || 0;
     document.getElementById('task-ref-progress').innerText = (res.data.referrals_l1_count || 0) + ' / 3';
     updateTasksUI(res.data);
+    updateWalletUI();
   }
 }
 
@@ -355,13 +495,10 @@ async function loadLeaderboard(type) {
   var el = document.getElementById('leaderboard');
   if (!el) return;
   el.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div>';
-
   var field = 'weekly_views_count';
   var subfield = 'إعلان';
-  if (type === 'refs') { field = 'referrals_l1_count'; subfield = 'إحالة'; }
-  else if (type === 'amb') { field = 'referrals_l1_count'; subfield = 'دعوة'; }
-
-  var res = await supabase.from('profiles').select('first_name, username, weekly_views_count, referrals_l1_count, total_views_count').order(field, { ascending: false }).limit(10);
+  if (type === 'refs' || type === 'amb') { field = 'referrals_l1_count'; subfield = 'إحالة'; }
+  var res = await supabase.from('profiles').select('first_name, username, weekly_views_count, referrals_l1_count').order(field, { ascending: false }).limit(10);
   if (!res.data || res.data.length === 0) {
     el.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لا يوجد متصدرون بعد.</div>';
     return;
@@ -370,9 +507,7 @@ async function loadLeaderboard(type) {
   for (var i = 0; i < res.data.length; i++) {
     var p = res.data[i];
     var val = type === 'ads' ? (p.weekly_views_count || 0) : (p.referrals_l1_count || 0);
-    var reward = 0;
-    if (i === 0) reward = 2.50; else if (i === 1) reward = 1.50; else if (i === 2) reward = 1.00;
-    else if (i < 10) reward = 0.10;
+    var reward = i === 0 ? 2.50 : (i === 1 ? 1.50 : (i === 2 ? 1.00 : 0.10));
     var name = p.first_name || (p.username ? '@' + p.username : 'User');
     var cls = i === 0 ? 'top1' : (i === 1 ? 'top2' : (i === 2 ? 'top3' : ''));
     html += '<div class="rank-row ' + cls + '"><div class="rank-pos">' + (i + 1) + '</div><div class="rank-name">' + name + '<div class="rank-sub">' + val + ' ' + subfield + '</div></div><div class="rank-score">+' + reward.toFixed(2) + '</div></div>';
