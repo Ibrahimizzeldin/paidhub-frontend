@@ -54,10 +54,25 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
     <div class="balance-value"><span id="userBalance">0.0000</span> <span class="usd">USDT</span></div>
     <button class="btn-primary" onclick="alert('قريباً')">💸 سحب</button>
     <div class="stats-row">
-      <div class="stat-box"><div class="num">x1.00</div><div class="lbl">مضاعف الإعلانات</div></div>
-      <div class="stat-box"><div class="num" id="dailyViews">0/50</div><div class="lbl">إعلانات اليوم</div></div>
+      <div class="stat-box"><div class="num" id="multiplierDisplay">x1.00</div><div class="lbl">مضاعف الإعلانات</div></div>
+      <div class="stat-box"><div class="num" id="weeklyViews">0</div><div class="lbl">هذا الأسبوع</div></div>
     </div>
   </div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <div style="color:#94a3b8; font-size:13px;">إعلانات اليوم</div>
+      <div style="color:#10b981; font-size:13px; font-weight:bold;" id="dailyCounter">0 / 50</div>
+    </div>
+    <div style="width:100%; height:8px; background:#0f172a; border-radius:10px; overflow:hidden; margin-bottom:12px;">
+      <div id="dailyProgress" style="height:100%; width:0%; background:linear-gradient(90deg,#0ea5e9,#10b981); transition:width 0.3s;"></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="color:#94a3b8; font-size:12px;">⏱ إعادة التعيين اليومية</div>
+      <div style="color:#f59e0b; font-size:13px; font-weight:bold;" id="resetTimer">00:00:00</div>
+    </div>
+  </div>
+
   <div class="section-title">📺 شبكات الإعلانات</div>
   <div class="ad-network"><div><div class="name">Adsgram</div><div class="reward">💎 0.0006+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Adsgram',0.0006)">مشاهدة ▶</button></div>
   <div class="ad-network"><div><div class="name">Gigapub</div><div class="reward">💎 0.0004+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Gigapub',0.0004)">مشاهدة ▶</button></div>
@@ -132,6 +147,20 @@ function showTab(name) {
   event.currentTarget.classList.add('active');
 }
 
+function startResetTimer() {
+  setInterval(function() {
+    var now = new Date();
+    var midnight = new Date();
+    midnight.setHours(24, 0, 0, 0);
+    var diff = midnight - now;
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    var el = document.getElementById('resetTimer');
+    if (el) el.innerText = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }, 1000);
+}
+
 async function init() {
   var u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
   if (!u) { return; }
@@ -149,8 +178,15 @@ async function loadUser(telegramId) {
   if (res.data) {
     currentUser = res.data;
     document.getElementById('userBalance').innerText = (res.data.balance || 0).toFixed(4);
-    document.getElementById('dailyViews').innerText = (res.data.daily_views_count || 0) + '/50';
     document.getElementById('refLink').innerText = 'https://t.me/PaidHubEarn_Bot?start=' + res.data.referral_code;
+
+    var daily = res.data.daily_views_count || 0;
+    var weekly = res.data.weekly_views_count || 0;
+    var mult = res.data.multiplier || 1.00;
+    document.getElementById('dailyCounter').innerText = daily + ' / 50';
+    document.getElementById('dailyProgress').style.width = Math.min((daily / 50) * 100, 100) + '%';
+    document.getElementById('weeklyViews').innerText = weekly;
+    document.getElementById('multiplierDisplay').innerText = 'x' + parseFloat(mult).toFixed(2);
   }
 }
 
@@ -173,8 +209,9 @@ function shareRef() {
   else window.open(share, '_blank');
 }
 
+startResetTimer();
 init();
 </script>
 
 </body>
-</html>
+  </html>
