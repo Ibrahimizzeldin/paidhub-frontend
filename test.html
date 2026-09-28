@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head><meta charset="UTF-8"><title>Test</title></head>
+<body style="background:#0f172a;color:#fff;padding:20px;font-family:sans-serif">
+<h1 id="status">جاري التحميل...</h1>
+<button onclick="alert('زر 1 يعمل!')" style="padding:20px;font-size:20px;background:#0ea5e9;color:#fff;border:none;border-radius:10px;width:100%;margin:10px 0">اختبار الزر 1</button>
+<button onclick="document.getElementById('status').innerText='✅ الزر 2 يعمل!'" style="padding:20px;font-size:20px;background:#10b981;color:#fff;border:none;border-radius:10px;width:100%;margin:10px 0">اختبار الزر 2</button>
+<script>
+document.getElementById('status').innerText = '✅ JS يعمل';
+</script>
+</body>
+</html>
