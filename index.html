@@ -2,56 +2,37 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PaidHubEarn</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-body { background: #0f172a; color: #fff; padding-bottom: 130px; min-height: 100vh; }
-.header { display: flex; align-items: center; justify-content: space-between; padding: 16px; }
-.header h1 { font-size: 20px; }
-.user { display: flex; align-items: center; gap: 10px; }
-.avatar { width: 40px; height: 40px; border-radius: 50%; background: #f59e0b; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-.badge { background: #1e293b; padding: 4px 10px; border-radius: 20px; font-size: 12px; color: #f59e0b; }
-.card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); margin: 12px 16px; padding: 20px; border-radius: 16px; border: 1px solid #1e293b; }
-.balance-label { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 8px; }
-.balance-value { text-align: center; font-size: 42px; font-weight: bold; margin-bottom: 20px; }
-.balance-value .usd { color: #10b981; font-size: 24px; }
-.btn-primary { width: 100%; padding: 14px; background: #0ea5e9; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
-.btn-primary:active { opacity: 0.8; }
-.stats-row { display: flex; gap: 10px; margin-top: 16px; }
-.stat-box { flex: 1; background: #1e293b; padding: 12px; border-radius: 12px; text-align: center; }
-.stat-box .num { color: #10b981; font-size: 18px; font-weight: bold; }
-.stat-box .lbl { color: #94a3b8; font-size: 11px; margin-top: 4px; }
-.section-title { padding: 16px 16px 8px; font-size: 16px; color: #e2e8f0; font-weight: bold; }
-.ad-network { background: #1e293b; margin: 8px 16px; padding: 16px; border-radius: 14px; display: flex; align-items: center; justify-content: space-between; }
-.ad-network .info { flex: 1; }
-.ad-network .name { font-size: 15px; font-weight: bold; margin-bottom: 4px; }
-.ad-network .reward { color: #10b981; font-size: 13px; }
-.ad-btn { background: #0ea5e9; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-
-.bottom-nav {
-  position: fixed;
-  bottom: 20px;
-  left: 8px;
-  right: 8px;
-  background: #0f172a;
-  border: 1px solid #1e293b;
-  border-radius: 20px;
-  display: flex;
-  justify-content: space-around;
-  padding: 8px 0;
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
-  z-index: 9999;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
-}
-.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #64748b; font-size: 11px; cursor: pointer; background: none; border: none; flex: 1; padding: 6px; -webkit-tap-highlight-color: transparent; user-select: none; }
-.nav-item.active { color: #0ea5e9; }
-.nav-item .icon { font-size: 20px; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.loading { text-align: center; padding: 40px; color: #64748b; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; -webkit-tap-highlight-color:transparent; }
+body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
+.header { display:flex; align-items:center; justify-content:space-between; padding:16px; }
+.header h1 { font-size:20px; }
+.avatar { width:40px; height:40px; border-radius:50%; background:#f59e0b; display:flex; align-items:center; justify-content:center; font-weight:bold; }
+.badge { background:#1e293b; padding:4px 10px; border-radius:20px; font-size:12px; color:#f59e0b; }
+.card { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); margin:12px 16px; padding:20px; border-radius:16px; border:1px solid #1e293b; }
+.balance-label { text-align:center; color:#94a3b8; font-size:14px; margin-bottom:8px; }
+.balance-value { text-align:center; font-size:42px; font-weight:bold; margin-bottom:20px; }
+.balance-value .usd { color:#10b981; font-size:24px; }
+.btn-primary { width:100%; padding:14px; background:#0ea5e9; color:#fff; border:none; border-radius:12px; font-size:16px; font-weight:bold; cursor:pointer; }
+.stats-row { display:flex; gap:10px; margin-top:16px; }
+.stat-box { flex:1; background:#1e293b; padding:12px; border-radius:12px; text-align:center; }
+.stat-box .num { color:#10b981; font-size:18px; font-weight:bold; }
+.stat-box .lbl { color:#94a3b8; font-size:11px; margin-top:4px; }
+.section-title { padding:16px 16px 8px; font-size:16px; color:#e2e8f0; font-weight:bold; }
+.ad-network { background:#1e293b; margin:8px 16px; padding:16px; border-radius:14px; display:flex; align-items:center; justify-content:space-between; }
+.ad-network .name { font-size:15px; font-weight:bold; margin-bottom:4px; }
+.ad-network .reward { color:#10b981; font-size:13px; }
+.ad-btn { background:#0ea5e9; color:#fff; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer; }
+.bottom-nav { position:fixed; bottom:20px; left:8px; right:8px; background:#0f172a; border:1px solid #1e293b; border-radius:20px; display:flex; justify-content:space-around; padding:8px 0; z-index:9999; box-shadow:0 -4px 20px rgba(0,0,0,0.5); }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; color:#64748b; font-size:11px; cursor:pointer; background:none; border:none; flex:1; padding:6px; }
+.nav-item.active { color:#0ea5e9; }
+.nav-item .icon { font-size:20px; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
 </style>
 </head>
 <body>
@@ -62,9 +43,7 @@ body { background: #0f172a; color: #fff; padding-bottom: 130px; min-height: 100v
     <span class="badge">⭐ برونزي</span>
   </div>
   <div class="user">
-    <div style="text-align:left; font-size:13px;">
-      <div id="userName">...</div>
-    </div>
+    <div style="text-align:left; font-size:13px;"><div id="userName">...</div></div>
     <div class="avatar" id="userAvatar">؟</div>
   </div>
 </div>
@@ -73,24 +52,23 @@ body { background: #0f172a; color: #fff; padding-bottom: 130px; min-height: 100v
   <div class="card">
     <div class="balance-label">أرباحك</div>
     <div class="balance-value"><span id="userBalance">0.0000</span> <span class="usd">USDT</span></div>
-    <button class="btn-primary" onclick="alert('قريباً: سحب')">💸 سحب</button>
+    <button class="btn-primary" onclick="alert('قريباً')">💸 سحب</button>
     <div class="stats-row">
       <div class="stat-box"><div class="num">x1.00</div><div class="lbl">مضاعف الإعلانات</div></div>
       <div class="stat-box"><div class="num" id="dailyViews">0/50</div><div class="lbl">إعلانات اليوم</div></div>
     </div>
   </div>
-
   <div class="section-title">📺 شبكات الإعلانات</div>
-  <div class="ad-network"><div class="info"><div class="name">Adsgram</div><div class="reward">💎 0.0006+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Adsgram', 0.0006)">مشاهدة ▶</button></div>
-  <div class="ad-network"><div class="info"><div class="name">Gigapub</div><div class="reward">💎 0.0004+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Gigapub', 0.0004)">مشاهدة ▶</button></div>
-  <div class="ad-network"><div class="info"><div class="name">Tads</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Tads', 0.0002)">مشاهدة ▶</button></div>
-  <div class="ad-network"><div class="info"><div class="name">Monetix</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Monetix', 0.0002)">مشاهدة ▶</button></div>
+  <div class="ad-network"><div><div class="name">Adsgram</div><div class="reward">💎 0.0006+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Adsgram',0.0006)">مشاهدة ▶</button></div>
+  <div class="ad-network"><div><div class="name">Gigapub</div><div class="reward">💎 0.0004+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Gigapub',0.0004)">مشاهدة ▶</button></div>
+  <div class="ad-network"><div><div class="name">Tads</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Tads',0.0002)">مشاهدة ▶</button></div>
+  <div class="ad-network"><div><div class="name">Monetix</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Monetix',0.0002)">مشاهدة ▶</button></div>
 </div>
 
 <div class="tab-content" id="tab-tasks">
   <div class="section-title">🔥 المهام اليومية</div>
-  <div class="ad-network"><div class="info"><div class="name">مكافأة تسجيل الدخول اليومي</div><div class="reward">💎 +0.0001</div></div><button class="ad-btn" onclick="claimDaily()">استلام</button></div>
-  <div class="ad-network"><div class="info"><div class="name">مشاهدة 5 إعلانات فيديو</div><div class="reward">💎 +0.0005</div></div><button class="ad-btn" onclick="watchAd('Daily', 0.0005)">مشاهدة</button></div>
+  <div class="ad-network"><div><div class="name">مكافأة تسجيل الدخول</div><div class="reward">💎 +0.0001</div></div><button class="ad-btn" onclick="watchAd('Daily',0.0001)">استلام</button></div>
+  <div class="ad-network"><div><div class="name">مشاهدة 5 إعلانات</div><div class="reward">💎 +0.0005</div></div><button class="ad-btn" onclick="watchAd('Daily',0.0005)">مشاهدة</button></div>
 </div>
 
 <div class="tab-content" id="tab-friends">
@@ -114,28 +92,23 @@ body { background: #0f172a; color: #fff; padding-bottom: 130px; min-height: 100v
       <div style="color:#94a3b8; font-size:13px;" id="accUsername">...</div>
     </div>
   </div>
-  <div class="ad-network"><div class="info"><div class="name">🔗 ربط محفظة TON</div><div class="reward">قريباً</div></div></div>
-  <div class="ad-network"><div class="info"><div class="name">📜 سجل المعاملات</div></div><button class="ad-btn" onclick="alert('قريباً')">فتح</button></div>
-  <div class="ad-network"><div class="info"><div class="name">🌐 اللغة</div><div class="reward">العربية</div></div></div>
+  <div class="ad-network"><div><div class="name">🔗 ربط محفظة TON</div><div class="reward">قريباً</div></div></div>
+  <div class="ad-network"><div><div class="name">🌐 اللغة</div><div class="reward">العربية</div></div></div>
 </div>
 
 <div class="tab-content" id="tab-contest">
   <div class="card">
     <div class="section-title" style="padding:0; text-align:center;">🏆 المسابقة الأسبوعية</div>
     <div style="text-align:center; margin-top:16px; color:#94a3b8; font-size:14px;">جوائز بقيمة 5$ كل أسبوع</div>
-    <div style="text-align:center; margin-top:8px; color:#10b981; font-size:20px; font-weight:bold;">0.40</div>
-    <div style="text-align:center; color:#94a3b8; font-size:12px;">مجموع الجوائز</div>
   </div>
-  <div class="section-title">🥇 أفضل 10 لاعبين</div>
-  <div id="leaderboard" class="loading">جاري التحميل...</div>
 </div>
 
-<div class="bottom-nav" id="bottomNav">
-  <button class="nav-item" data-tab="account"><span class="icon">👤</span>الحساب</button>
-  <button class="nav-item" data-tab="contest"><span class="icon">🏆</span>المسابقة</button>
-  <button class="nav-item active" data-tab="home"><span class="icon">💰</span>PaidHub</button>
-  <button class="nav-item" data-tab="friends"><span class="icon">👥</span>الأصدقاء</button>
-  <button class="nav-item" data-tab="tasks"><span class="icon">📋</span>المهام</button>
+<div class="bottom-nav">
+  <button class="nav-item" onclick="showTab('account')"><span class="icon">👤</span>الحساب</button>
+  <button class="nav-item" onclick="showTab('contest')"><span class="icon">🏆</span>المسابقة</button>
+  <button class="nav-item active" onclick="showTab('home')"><span class="icon">💰</span>PaidHub</button>
+  <button class="nav-item" onclick="showTab('friends')"><span class="icon">👥</span>الأصدقاء</button>
+  <button class="nav-item" onclick="showTab('tasks')"><span class="icon">📋</span>المهام</button>
 </div>
 
 <script>
@@ -143,69 +116,60 @@ const SUPABASE_URL = 'https://xcvfhjsryxigupmlbcdu.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjdmZoanNyeXhpZ3VwbWxiY2R1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjE2NTcsImV4cCI6MjEwNjEzNzY1N30.tgB3YimnbCviQoeY10dEocbHvA4sePaJ83Sj_OlB8R0';
 const API_URL = 'https://paidhub-backend.vercel.app';
 
-let tg = null;
-try { tg = window.Telegram.WebApp; if (tg && tg.ready) { tg.ready(); tg.expand(); } } catch(e) { console.log('TG err', e); }
+var tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) { try { tg.ready(); tg.expand(); } catch(e){} }
 
-let supabase = null;
-try { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON); } catch(e) { console.log('SB err', e); }
+var supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+var currentUser = null;
 
-let currentUser = null;
-
-// Tab switching via event delegation (more robust than inline onclick)
-document.getElementById('bottomNav').addEventListener('click', function(e) {
-  const btn = e.target.closest('.nav-item');
-  if (!btn) return;
-  const name = btn.getAttribute('data-tab');
-  if (!name) return;
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const target = document.getElementById('tab-' + name);
+function showTab(name) {
+  var tabs = document.querySelectorAll('.tab-content');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  var navs = document.querySelectorAll('.nav-item');
+  for (var i = 0; i < navs.length; i++) navs[i].classList.remove('active');
+  var target = document.getElementById('tab-' + name);
   if (target) target.classList.add('active');
-  btn.classList.add('active');
-});
+  event.currentTarget.classList.add('active');
+}
 
 async function init() {
-  const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
-  if (!u) { console.log('No TG user'); return; }
-
+  var u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+  if (!u) { return; }
   document.getElementById('userName').innerText = u.first_name || 'User';
   document.getElementById('userAvatar').innerText = (u.first_name || 'U')[0].toUpperCase();
   document.getElementById('accName').innerText = u.first_name || 'User';
   document.getElementById('accUsername').innerText = '@' + (u.username || 'user');
-
-  try { await fetch(`${API_URL}/api/user?telegram_id=${u.id}`); } catch(e) { console.log(e); }
+  try { await fetch(API_URL + '/api/user?telegram_id=' + u.id); } catch(e) {}
   await loadUser(u.id);
 }
 
 async function loadUser(telegramId) {
   if (!supabase) return;
-  const { data } = await supabase.from('profiles').select('*').eq('telegram_id', telegramId).single();
-  if (data) {
-    currentUser = data;
-    document.getElementById('userBalance').innerText = (data.balance || 0).toFixed(4);
-    document.getElementById('dailyViews').innerText = `${data.daily_views_count || 0}/50`;
-    document.getElementById('refLink').innerText = `https://t.me/PaidHubEarn_Bot?start=${data.referral_code}`;
+  var res = await supabase.from('profiles').select('*').eq('telegram_id', telegramId).single();
+  if (res.data) {
+    currentUser = res.data;
+    document.getElementById('userBalance').innerText = (res.data.balance || 0).toFixed(4);
+    document.getElementById('dailyViews').innerText = (res.data.daily_views_count || 0) + '/50';
+    document.getElementById('refLink').innerText = 'https://t.me/PaidHubEarn_Bot?start=' + res.data.referral_code;
   }
 }
 
 async function watchAd(network, reward) {
   if (!currentUser) { alert('الرجاء المحاولة لاحقاً'); return; }
-  if (tg && tg.showAlert) tg.showAlert('سيتم فتح الإعلان...');
+  if (tg) tg.showAlert('سيتم فتح الإعلان...');
   try {
-    const res = await fetch(`${API_URL}/api/ads?user_id=${currentUser.telegram_id}&reward=${reward}&network=${network}`);
+    var res = await fetch(API_URL + '/api/ads?user_id=' + currentUser.telegram_id + '&reward=' + reward + '&network=' + network);
     if (res.ok) {
-      if (tg && tg.showAlert) tg.showAlert('✅ تم إضافة المكافأة');
+      if (tg) tg.showAlert('✅ تم إضافة المكافأة');
       await loadUser(currentUser.telegram_id);
     }
   } catch(e) { alert('خطأ في الاتصال'); }
 }
 
-async function claimDaily() { await watchAd('Daily', 0.0001); }
-
 function shareRef() {
-  const url = document.getElementById('refLink').innerText;
-  const share = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent('اربح المال معي على PaidHubEarn!')}`;
-  if (tg && tg.openTelegramLink) tg.openTelegramLink(share);
+  var url = document.getElementById('refLink').innerText;
+  var share = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent('اربح معي على PaidHubEarn!');
+  if (tg) tg.openTelegramLink(share);
   else window.open(share, '_blank');
 }
 
@@ -213,4 +177,4 @@ init();
 </script>
 
 </body>
-  </html>
+</html>
