@@ -26,13 +26,19 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
 .ad-network { background:#1e293b; margin:8px 16px; padding:16px; border-radius:14px; display:flex; align-items:center; justify-content:space-between; }
 .ad-network .name { font-size:15px; font-weight:bold; margin-bottom:4px; }
 .ad-network .reward { color:#10b981; font-size:13px; }
+.ad-network .desc { color:#94a3b8; font-size:12px; margin-top:2px; }
 .ad-btn { background:#0ea5e9; color:#fff; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer; }
+.ad-btn.disabled { background:#475569; cursor:not-allowed; }
+.ad-btn.success { background:#10b981; }
 .bottom-nav { position:fixed; bottom:20px; left:8px; right:8px; background:#0f172a; border:1px solid #1e293b; border-radius:20px; display:flex; justify-content:space-around; padding:8px 0; z-index:9999; box-shadow:0 -4px 20px rgba(0,0,0,0.5); }
 .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; color:#64748b; font-size:11px; cursor:pointer; background:none; border:none; flex:1; padding:6px; }
 .nav-item.active { color:#0ea5e9; }
 .nav-item .icon { font-size:20px; }
 .tab-content { display:none; }
 .tab-content.active { display:block; }
+.tabs-bar { display:flex; gap:8px; margin:12px 16px; background:#1e293b; padding:6px; border-radius:14px; }
+.tabs-bar button { flex:1; padding:10px; border:none; background:transparent; color:#94a3b8; border-radius:10px; font-size:13px; cursor:pointer; font-weight:bold; }
+.tabs-bar button.active { background:#0ea5e9; color:#fff; }
 </style>
 </head>
 <body>
@@ -48,6 +54,7 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
   </div>
 </div>
 
+<!-- ================= HOME ================= -->
 <div class="tab-content active" id="tab-home">
   <div class="card">
     <div class="balance-label">أرباحك</div>
@@ -62,7 +69,7 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
   <div class="card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
       <div style="color:#94a3b8; font-size:13px;">إعلانات اليوم</div>
-      <div style="color:#10b981; font-size:13px; font-weight:bold;" id="dailyCounter">0 / 50</div>
+      <div style="color:#10b981; font-size:13px; font-weight:bold; direction:ltr;" id="dailyCounter">0 / 50</div>
     </div>
     <div style="width:100%; height:8px; background:#0f172a; border-radius:10px; overflow:hidden; margin-bottom:12px;">
       <div id="dailyProgress" style="height:100%; width:0%; background:linear-gradient(90deg,#0ea5e9,#10b981); transition:width 0.3s;"></div>
@@ -80,12 +87,81 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
   <div class="ad-network"><div><div class="name">Monetix</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Monetix',0.0002)">مشاهدة ▶</button></div>
 </div>
 
+<!-- ================= TASKS ================= -->
 <div class="tab-content" id="tab-tasks">
-  <div class="section-title">🔥 المهام اليومية</div>
-  <div class="ad-network"><div><div class="name">مكافأة تسجيل الدخول</div><div class="reward">💎 +0.0001</div></div><button class="ad-btn" onclick="watchAd('Daily',0.0001)">استلام</button></div>
-  <div class="ad-network"><div><div class="name">مشاهدة 5 إعلانات</div><div class="reward">💎 +0.0005</div></div><button class="ad-btn" onclick="watchAd('Daily',0.0005)">مشاهدة</button></div>
+  <div class="tabs-bar">
+    <button class="active" id="taskTab-daily" onclick="switchTaskTab('daily')">🔥 اليومية</button>
+    <button id="taskTab-beginner" onclick="switchTaskTab('beginner')">🎯 المبتدئين</button>
+    <button id="taskTab-vip" onclick="switchTaskTab('vip')">👑 VIP</button>
+  </div>
+
+  <!-- Daily tasks -->
+  <div id="tasks-daily">
+    <div class="ad-network">
+      <div>
+        <div class="name">مكافأة تسجيل الدخول اليومي</div>
+        <div class="reward">💎 +0.0001</div>
+      </div>
+      <button class="ad-btn" id="btn-daily-login" onclick="claimDailyLogin()">استلام</button>
+    </div>
+    <div class="ad-network">
+      <div>
+        <div class="name">مشاهدة 5 إعلانات فيديو</div>
+        <div class="reward">💎 +0.0005</div>
+        <div class="desc" id="task-watch-progress">0 / 5</div>
+      </div>
+      <button class="ad-btn" id="btn-daily-watch" onclick="claimWatchTask()">مشاهدة</button>
+    </div>
+  </div>
+
+  <!-- Beginner tasks -->
+  <div id="tasks-beginner" style="display:none;">
+    <div class="ad-network">
+      <div>
+        <div class="name">📢 متابعة قناة PaidZ الرسمية</div>
+        <div class="reward">💎 +0.0001</div>
+      </div>
+      <button class="ad-btn" id="btn-task-channel" onclick="claimChannelTask()">فتح</button>
+    </div>
+    <div class="ad-network">
+      <div>
+        <div class="name">💬 الانضمام لمحادثة PaidZ</div>
+        <div class="reward">💎 +0.0001</div>
+      </div>
+      <button class="ad-btn" id="btn-task-group" onclick="claimGroupTask()">فتح</button>
+    </div>
+    <div class="ad-network">
+      <div>
+        <div class="name">👥 دعوة 3 أصدقاء</div>
+        <div class="reward">💎 +0.0005</div>
+        <div class="desc" id="task-ref-progress">0 / 3</div>
+      </div>
+      <button class="ad-btn" id="btn-task-ref" onclick="showTabByName('friends')">دعوة</button>
+    </div>
+  </div>
+
+  <!-- VIP tasks -->
+  <div id="tasks-vip" style="display:none;">
+    <div class="ad-network">
+      <div>
+        <div class="name">👑 قناة VIP: TON Raids</div>
+        <div class="desc">مهام حصرية لأعضاء VIP</div>
+        <div class="reward">💎 +0.0004</div>
+      </div>
+      <button class="ad-btn" onclick="openLink('https://t.me/tonraids')">انضم</button>
+    </div>
+    <div class="ad-network">
+      <div>
+        <div class="name">👑 قناة VIP: TON Breach</div>
+        <div class="desc">مهام حصرية لأعضاء VIP</div>
+        <div class="reward">💎 +0.0004</div>
+      </div>
+      <button class="ad-btn" onclick="openLink('https://t.me/tonbreach')">انضم</button>
+    </div>
+  </div>
 </div>
 
+<!-- ================= FRIENDS ================= -->
 <div class="tab-content" id="tab-friends">
   <div class="card">
     <div class="balance-label">رابط الإحالة الخاص بك</div>
@@ -99,6 +175,7 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
   </div>
 </div>
 
+<!-- ================= ACCOUNT ================= -->
 <div class="tab-content" id="tab-account">
   <div class="card">
     <div class="balance-label">معلومات الحساب</div>
@@ -111,6 +188,7 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
   <div class="ad-network"><div><div class="name">🌐 اللغة</div><div class="reward">العربية</div></div></div>
 </div>
 
+<!-- ================= CONTEST ================= -->
 <div class="tab-content" id="tab-contest">
   <div class="card">
     <div class="section-title" style="padding:0; text-align:center;">🏆 المسابقة الأسبوعية</div>
@@ -119,11 +197,11 @@ body { background:#0f172a; color:#fff; padding-bottom:120px; min-height:100vh; }
 </div>
 
 <div class="bottom-nav">
-  <button class="nav-item" onclick="showTab('account')"><span class="icon">👤</span>الحساب</button>
-  <button class="nav-item" onclick="showTab('contest')"><span class="icon">🏆</span>المسابقة</button>
-  <button class="nav-item active" onclick="showTab('home')"><span class="icon">💰</span>PaidHub</button>
-  <button class="nav-item" onclick="showTab('friends')"><span class="icon">👥</span>الأصدقاء</button>
-  <button class="nav-item" onclick="showTab('tasks')"><span class="icon">📋</span>المهام</button>
+  <button class="nav-item" onclick="showTabByName('account')"><span class="icon">👤</span>الحساب</button>
+  <button class="nav-item" onclick="showTabByName('contest')"><span class="icon">🏆</span>المسابقة</button>
+  <button class="nav-item active" onclick="showTabByName('home')"><span class="icon">💰</span>PaidHub</button>
+  <button class="nav-item" onclick="showTabByName('friends')"><span class="icon">👥</span>الأصدقاء</button>
+  <button class="nav-item" onclick="showTabByName('tasks')"><span class="icon">📋</span>المهام</button>
 </div>
 
 <script>
@@ -137,7 +215,7 @@ if (tg) { try { tg.ready(); tg.expand(); } catch(e){} }
 var supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 var currentUser = null;
 
-function showTab(name) {
+function showTabByName(name) {
   var tabs = document.querySelectorAll('.tab-content');
   for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
   var navs = document.querySelectorAll('.nav-item');
@@ -145,6 +223,15 @@ function showTab(name) {
   var target = document.getElementById('tab-' + name);
   if (target) target.classList.add('active');
   event.currentTarget.classList.add('active');
+}
+
+function switchTaskTab(name) {
+  document.getElementById('tasks-daily').style.display = name === 'daily' ? 'block' : 'none';
+  document.getElementById('tasks-beginner').style.display = name === 'beginner' ? 'block' : 'none';
+  document.getElementById('tasks-vip').style.display = name === 'vip' ? 'block' : 'none';
+  document.getElementById('taskTab-daily').classList.toggle('active', name === 'daily');
+  document.getElementById('taskTab-beginner').classList.toggle('active', name === 'beginner');
+  document.getElementById('taskTab-vip').classList.toggle('active', name === 'vip');
 }
 
 function startResetTimer() {
@@ -187,6 +274,40 @@ async function loadUser(telegramId) {
     document.getElementById('dailyProgress').style.width = Math.min((daily / 50) * 100, 100) + '%';
     document.getElementById('weeklyViews').innerText = weekly;
     document.getElementById('multiplierDisplay').innerText = 'x' + parseFloat(mult).toFixed(2);
+
+    updateTasksUI(res.data);
+  }
+}
+
+function updateTasksUI(data) {
+  var dailyLogin = document.getElementById('btn-daily-login');
+  if (data.last_login_reward) {
+    var last = new Date(data.last_login_reward).toISOString().split('T')[0];
+    var today = new Date().toISOString().split('T')[0];
+    if (last === today) {
+      dailyLogin.innerText = '✓ تم';
+      dailyLogin.classList.add('success');
+      dailyLogin.disabled = true;
+    } else {
+      dailyLogin.innerText = 'استلام';
+      dailyLogin.classList.remove('success');
+      dailyLogin.disabled = false;
+    }
+  }
+
+  var watchProg = document.getElementById('task-watch-progress');
+  if (watchProg) watchProg.innerText = Math.min(data.daily_views_count || 0, 5) + ' / 5';
+
+  var watchBtn = document.getElementById('btn-daily-watch');
+  if ((data.daily_views_count || 0) >= 5) {
+    if (data.last_watch_reward && new Date(data.last_watch_reward).toISOString().split('T')[0] === new Date().toISOString().split('T')[0]) {
+      watchBtn.innerText = '✓ تم';
+      watchBtn.classList.add('success');
+      watchBtn.disabled = true;
+    } else {
+      watchBtn.innerText = 'استلام';
+      watchBtn.disabled = false;
+    }
   }
 }
 
@@ -198,8 +319,54 @@ async function watchAd(network, reward) {
   } catch(e) {}
   setTimeout(async () => {
     await loadUser(currentUser.telegram_id);
-    if (tg) tg.showAlert('✅ تم إضافة المكافأة');
+    var daily = currentUser ? (currentUser.daily_views_count || 0) : 0;
+    if (daily >= 50) {
+      if (tg) tg.showAlert('⚠️ وصلت للحد اليومي (50 إعلان).');
+    } else {
+      if (tg) tg.showAlert('✅ تم إضافة المكافأة');
+    }
   }, 900);
+}
+
+function openLink(url) {
+  if (tg) tg.openTelegramLink(url);
+  else window.open(url, '_blank');
+}
+
+async function claimDailyLogin() {
+  if (!currentUser) return;
+  try {
+    await fetch(API_URL + '/api/tasks/claim?user_id=' + currentUser.telegram_id + '&task=daily_login', { mode: 'no-cors' });
+  } catch(e) {}
+  setTimeout(async () => { await loadUser(currentUser.telegram_id); if (tg) tg.showAlert('✅ تم استلام مكافأة تسجيل الدخول'); }, 900);
+}
+
+async function claimWatchTask() {
+  if (!currentUser) return;
+  if ((currentUser.daily_views_count || 0) < 5) {
+    if (tg) tg.showAlert('تحتاج مشاهدة 5 إعلانات أولاً');
+    return;
+  }
+  try {
+    await fetch(API_URL + '/api/tasks/claim?user_id=' + currentUser.telegram_id + '&task=watch_5', { mode: 'no-cors' });
+  } catch(e) {}
+  setTimeout(async () => { await loadUser(currentUser.telegram_id); if (tg) tg.showAlert('✅ تم استلام المكافأة'); }, 900);
+}
+
+async function claimChannelTask() {
+  if (!currentUser) return;
+  if (tg) tg.openTelegramLink('https://t.me/PaidHubEarn');
+  setTimeout(() => {
+    if (tg) tg.showAlert('بعد الانضمام، عد واضغط "تحقق"');
+  }, 1500);
+}
+
+async function claimGroupTask() {
+  if (!currentUser) return;
+  if (tg) tg.openTelegramLink('https://t.me/PaidHubEarn');
+  setTimeout(() => {
+    if (tg) tg.showAlert('بعد الانضمام، عد واضغط "تحقق"');
+  }, 1500);
 }
 
 function shareRef() {
