@@ -166,11 +166,35 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <div id="friends-ambassadors" style="display:none;">
     <div class="card">
       <div class="section-title" style="padding:0; text-align:center;">👑 برنامج السفراء</div>
-      <div style="text-align:center; margin-top:12px; color:#94a3b8; font-size:12px;">قدم قناتك واربح على كل مطالبة</div>
-      <div style="text-align:center; margin-top:12px;"><button class="btn-primary" onclick="alert('قريباً')">⚡ التقديم كسفير</button></div>
+      <div style="text-align:center; margin-top:8px; color:#94a3b8; font-size:11px;">هل لديك قناة؟ وزّع حتى 2 رمز ترويجي يومياً للمشتركين واربح $0.0005 USDT لكل مطالبة.</div>
+
+      <div style="margin-top:14px;">
+        <div style="color:#94a3b8; font-size:11px; margin-bottom:6px;">رابط قناتك على تيليجرام</div>
+        <input id="ambChannelLink" type="text" placeholder="https://t.me/your_channel" style="width:100%; padding:11px; background:#0f172a; border:1px solid #1e293b; color:#fff; border-radius:9px; font-size:12px; outline:none;">
+      </div>
+
+      <div style="margin-top:12px;">
+        <div style="color:#94a3b8; font-size:11px; margin-bottom:6px;">اسم القناة (اختياري)</div>
+        <input id="ambChannelName" type="text" placeholder="مثال: قناة الأخبار" style="width:100%; padding:11px; background:#0f172a; border:1px solid #1e293b; color:#fff; border-radius:9px; font-size:12px; outline:none;">
+      </div>
+
+      <div style="background:#0f172a; padding:10px; border-radius:9px; margin-top:12px; font-size:10px; color:#f59e0b; line-height:1.6;">
+        ⚠️ قبل التقديم، يجب أن تكون مسؤولاً في القناة وأن يكون البوت @PaidHubEarn_Bot مشرفاً فيها.
+      </div>
+
+      <button class="btn-primary" style="margin-top:12px;" onclick="submitAmbassador()">⚡ التقديم كسفير</button>
+    </div>
+
+    <div id="myAmbassadorBox" style="display:none; margin-top:8px;">
+      <div class="card">
+        <div style="text-align:center; font-size:12px; font-weight:bold; margin-bottom:10px;">حالة طلبك</div>
+        <div style="text-align:center; font-size:11px;" id="ambStatusText">...</div>
+        <div style="margin-top:12px; text-align:center; color:#10b981; font-size:11px;">
+          المطالبات: <span id="ambClaims">0</span> • الأرباح: <span id="ambEarnings">0.0000</span> USDT
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
 <div class="tab-content" id="tab-account">
   <div class="card">
@@ -274,7 +298,7 @@ function showTabByName(name) {
   var target = document.getElementById('tab-' + name);
   if (target) target.classList.add('active');
   if (event && event.currentTarget && event.currentTarget.classList) event.currentTarget.classList.add('active');
-  if (name === 'friends' && currentUser) loadFriends(currentUser.id);
+  if (name === 'friends' && currentUser) { loadFriends(currentUser.id); loadMyAmbassador(); }
   if (name === 'contest') loadLeaderboard(currentContestType);
 }
 
@@ -540,7 +564,34 @@ async function claimWatchTask() {
   try { await fetch(API_URL + '/api/tasks/claim?user_id=' + currentUser.telegram_id + '&task=watch_5', { mode: 'no-cors' }); } catch(e) {}
   setTimeout(async () => { await loadUser(currentUser.telegram_id); if (tg) tg.showAlert('✅ تم استلام المكافأة'); }, 900);
 }
+async function submitAmbassador() {
+  if (!currentUser) { if (tg) tg.showAlert('الرجاء فتح التطبيق من تلغرام'); return; }
+  var link = document.getElementById('ambChannelLink').value.trim();
+  var name = document.getElementById('ambChannelName').value.trim();
+  if (!link || link.indexOf('t.me/') === -1) { if (tg) tg.showAlert('أدخل رابط قناة صحيح'); return; }
+  if (tg) tg.showAlert('جاري الإرسال...');
+  var username = link.replace('https://','').replace('http://','').replace('t.me/','').replace('@','');
+  try {
+    await fetch(API_URL + '/api/ambassador/apply?user_id=' + currentUser.telegram_id + '&channel=' + encodeURIComponent(username) + '&link=' + encodeURIComponent(link) + '&name=' + encodeURIComponent(name), { mode: 'no-cors' });
+  } catch(e) {}
+  setTimeout(function() {
+    if (tg) tg.showAlert('✅ تم استلام طلبك. سيتم مراجعته قريباً.');
+    loadMyAmbassador();
+  }, 1000);
+}
 
+async function loadMyAmbassador() {
+  if (!currentUser || !supabase) return;
+  var res = await supabase.from('ambassadors').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1);
+  var box = document.getElementById('myAmbassadorBox');
+  if (!res.data || res.data.length === 0) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  var a = res.data[0];
+  var statusText = a.status === 'approved' ? '✅ تمت الموافقة' : (a.status === 'rejected' ? '❌ مرفوض' : '⏳ قيد المراجعة');
+  document.getElementById('ambStatusText').innerText = statusText + ' — @' + a.channel_username;
+  document.getElementById('ambClaims').innerText = a.claims_count || 0;
+  document.getElementById('ambEarnings').innerText = ((a.claims_count || 0) * 0.0005).toFixed(4);
+                         }
 function shareRef() {
   var url = document.getElementById('refLink').innerText;
   var share = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent('اربح معي على PaidHubEarn!');
