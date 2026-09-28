@@ -114,7 +114,6 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <div class="ad-network"><div><div class="name">Gigapub</div><div class="reward">💎 0.0004+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Gigapub',0.0004)">مشاهدة ▶</button></div>
   <div class="ad-network"><div><div class="name">Tads</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Tads',0.0002)">مشاهدة ▶</button></div>
   <div class="ad-network"><div><div class="name">Monetix</div><div class="reward">💎 0.0002+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('Monetix',0.0002)">مشاهدة ▶</button></div>
-
   <div class="section-title">📢 حملات الترويج النشطة</div>
   <div id="campaignsList" style="padding-bottom:20px;"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div></div>
 </div>
@@ -300,11 +299,33 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
       </div>
     </div>
 
-    <button class="btn-primary" style="margin-top:12px;" onclick="createCampaign()">🚀 إنشاء الحملة</button>
+    <button class="btn-primary" style="margin-top:12px;" onclick="prepareCampaignPayment()">🚀 إنشاء الحملة</button>
   </div>
 
   <div class="section-title">📋 حملاتي</div>
   <div id="myCampaigns" style="padding-bottom:20px;"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لا توجد حملات بعد.</div></div>
+
+  <div id="paymentModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:flex-end;">
+    <div style="background:#0f172a; width:100%; border-radius:20px 20px 0 0; padding:20px; border-top:1px solid #1e293b;">
+      <div style="text-align:center; font-size:15px; font-weight:bold; margin-bottom:8px;">💳 إتمام الدفع</div>
+      <div style="text-align:center; color:#94a3b8; font-size:11px; margin-bottom:16px;">حوّل المبلغ إلى محفظة المشروع عبر USDT على شبكة TON</div>
+
+      <div style="background:#1e293b; padding:12px; border-radius:10px; margin-bottom:10px;">
+        <div style="color:#94a3b8; font-size:10px; margin-bottom:4px;">المبلغ</div>
+        <div style="color:#f59e0b; font-size:18px; font-weight:bold;" id="payAmount">0.0000 USDT</div>
+      </div>
+
+      <div style="background:#1e293b; padding:12px; border-radius:10px; margin-bottom:10px;">
+        <div style="color:#94a3b8; font-size:10px; margin-bottom:4px;">عنوان محفظة المشروع (TON)</div>
+        <div style="color:#fff; font-size:11px; word-break:break-all; font-family:monospace;" id="payAddress">UQALZMicg23BUZMS0VgEMC713rfMMdsmyyf3AWU999Jh9unf</div>
+      </div>
+
+      <button class="btn-primary" style="background:#475569; margin-bottom:8px;" onclick="copyAddress()">📋 نسخ عنوان المحفظة</button>
+      <button class="btn-primary" style="background:#10b981; margin-bottom:8px;" onclick="openTonkeeperPayment()">💳 ادفع الآن عبر المحفظة</button>
+      <button class="btn-primary" style="background:#475569; margin-bottom:8px;" onclick="confirmCampaignPayment()">✅ لقد قمت بالدفع (تأكيد يدوي)</button>
+      <button class="btn-primary" style="background:#1e293b;" onclick="closePaymentModal()">إلغاء</button>
+    </div>
+  </div>
 </div>
 
 <div class="bottom-nav">
@@ -313,8 +334,8 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <button class="nav-item active" onclick="showTabByName('home')"><span class="icon">💰</span>PaidHub</button>
   <button class="nav-item" onclick="showTabByName('friends')"><span class="icon">👥</span>الأصدقاء</button>
   <button class="nav-item" onclick="showTabByName('tasks')"><span class="icon">📋</span>المهام</button>
-                                                                </div>
-                                                                <script>
+  </div>
+  <script>
 const SUPABASE_URL = 'https://xcvfhjsryxigupmlbcdu.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjdmZoanNyeXhpZ3VwbWxiY2R1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjE2NTcsImV4cCI6MjEwNjEzNzY1N30.tgB3YimnbCviQoeY10dEocbHvA4sePaJ83Sj_OlB8R0';
 const API_URL = 'https://paidhub-backend.vercel.app';
@@ -329,6 +350,7 @@ var currentUser = null;
 var currentContestType = 'ads';
 var currentCampType = 'channel';
 var tonConnectUI = null;
+var pendingCampaign = null;
 
 function showTabByName(name) {
   var tabs = document.querySelectorAll('.tab-content');
@@ -553,7 +575,7 @@ async function clickCampaign(campaignId, link) {
   }, 1200);
 }
 
-async function createCampaign() {
+function prepareCampaignPayment() {
   if (!currentUser) { if (tg) tg.showAlert('الرجاء فتح التطبيق من تلغرام'); return; }
   var link = document.getElementById('campLink').value.trim();
   var title = document.getElementById('campTitle').value.trim();
@@ -564,24 +586,61 @@ async function createCampaign() {
   if (!clicks || clicks < 100) { if (tg) tg.showAlert('الحد الأدنى 100 نقرة'); return; }
 
   var cost = clicks * CPC;
-  if (parseFloat(currentUser.balance || 0) < cost) {
-    if (tg) tg.showAlert('رصيدك غير كافٍ. تحتاج ' + cost.toFixed(4) + ' USDT');
-    return;
+  pendingCampaign = {
+    type: currentCampType,
+    link: link,
+    title: title || 'حملة ترويجية',
+    desc: desc,
+    clicks: clicks,
+    cost: cost
+  };
+
+  document.getElementById('payAmount').innerText = cost.toFixed(4) + ' USDT';
+  document.getElementById('paymentModal').style.display = 'flex';
+}
+
+function closePaymentModal() {
+  document.getElementById('paymentModal').style.display = 'none';
+  pendingCampaign = null;
+}
+
+function copyAddress() {
+  var addr = document.getElementById('payAddress').innerText;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(addr);
+    if (tg) tg.showAlert('✅ تم نسخ العنوان');
+  } else {
+    if (tg) tg.showAlert('انسخ يدوياً: ' + addr);
   }
+}
 
-  if (tg) tg.showAlert('جاري إنشاء الحملة...');
-  try { await fetch(API_URL + '/api/campaigns/create?user_id=' + currentUser.telegram_id + '&target_type=' + currentCampType + '&target_link=' + encodeURIComponent(link) + '&title=' + encodeURIComponent(title || 'حملة ترويجية') + '&description=' + encodeURIComponent(desc) + '&clicks=' + clicks, { mode: 'no-cors' }); } catch(e) {}
+function openTonkeeperPayment() {
+  if (!pendingCampaign) return;
+  var projectWallet = 'UQALZMicg23BUZMS0VgEMC713rfMMdsmyyf3AWU999Jh9unf';
+  var usdtJetton = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs';
+  var amountMicro = Math.round(pendingCampaign.cost * 1000000);
+  var url = 'https://app.tonkeeper.com/transfer/' + projectWallet + '?jetton=' + usdtJetton + '&amount=' + amountMicro;
+  window.open(url, '_blank');
+  if (tg) tg.showAlert('تم فتح محفظتك. أكمل الدفع ثم عد واضغط "لقد قمت بالدفع".');
+}
 
-  setTimeout(async function() {
-    await loadUser(currentUser.telegram_id);
-    await loadMyCampaigns();
-    await loadCampaigns();
+async function confirmCampaignPayment() {
+  if (!pendingCampaign || !currentUser) return;
+  if (tg) tg.showAlert('جاري إرسال الطلب...');
+  var p = pendingCampaign;
+  try {
+    await fetch(API_URL + '/api/campaigns/create?user_id=' + currentUser.telegram_id + '&target_type=' + p.type + '&target_link=' + encodeURIComponent(p.link) + '&title=' + encodeURIComponent(p.title) + '&description=' + encodeURIComponent(p.desc) + '&clicks=' + p.clicks, { mode: 'no-cors' });
+  } catch(e) {}
+
+  setTimeout(function() {
+    closePaymentModal();
     document.getElementById('campLink').value = '';
     document.getElementById('campTitle').value = '';
     document.getElementById('campDesc').value = '';
     document.getElementById('campClicks').value = '';
     document.getElementById('campCost').innerText = '0.0000 USDT';
-    if (tg) tg.showAlert('✅ تم إنشاء الحملة بنجاح');
+    if (tg) tg.showAlert('✅ تم استلام طلبك. سيتم تفعيل الحملة بعد تأكيد الدفع.');
+    loadMyCampaigns();
   }, 1200);
 }
 
@@ -678,7 +737,7 @@ async function loadFriends(userId) {
   document.getElementById('pendingRefs').innerText = pending;
   var tx = await supabase.from('transactions').select('amount').eq('user_id', userId).in('type', ['referral_signup', 'referral_l1', 'referral_l2']);
   var totalEarn = 0;
-  if (tx.data) for (var j = 0; j < tx.data.length; j++) totalEarn += parseFloat(tx.data[j].amount || 0);
+      if (tx.data) for (var j = 0; j < tx.data.length; j++) totalEarn += parseFloat(tx.data[j].amount || 0);
   document.getElementById('refEarnings').innerText = totalEarn.toFixed(4);
   document.getElementById('l1Earn').innerText = '0.0000';
   document.getElementById('l2Earn').innerText = '0.0000';
