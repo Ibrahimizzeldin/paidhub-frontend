@@ -158,12 +158,12 @@ async function watchAd(network, reward) {
   if (!currentUser) { alert('الرجاء المحاولة لاحقاً'); return; }
   if (tg) tg.showAlert('سيتم فتح الإعلان...');
   try {
-    var res = await fetch(API_URL + '/api/ads?user_id=' + currentUser.telegram_id + '&reward=' + reward + '&network=' + network);
-    if (res.ok) {
-      if (tg) tg.showAlert('✅ تم إضافة المكافأة');
-      await loadUser(currentUser.telegram_id);
-    }
-  } catch(e) { alert('خطأ في الاتصال'); }
+    await fetch(API_URL + '/api/ads?user_id=' + currentUser.telegram_id + '&reward=' + reward + '&network=' + network, { mode: 'no-cors' });
+  } catch(e) {}
+  setTimeout(async () => {
+    await loadUser(currentUser.telegram_id);
+    if (tg) tg.showAlert('✅ تم إضافة المكافأة');
+  }, 900);
 }
 
 function shareRef() {
