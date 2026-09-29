@@ -214,7 +214,19 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
     <button class="ad-btn success" id="btnNotifications" onclick="toggleNotifications()">مفعّل</button>
   </div>
   <div class="ad-network"><div><div class="name">🌐 اللغة</div><div class="reward">العربية</div></div></div>
-  <div id="transactionsBox" style="display:none; padding-bottom:20px;">
+<div class="ad-network">
+  <div><div class="name">📢 القناة الرسمية</div><div class="desc">تابع آخر التحديثات وإثباتات السحب</div></div>
+  <button class="ad-btn" onclick="openLink('https://t.me/PaidHubEarn')">فتح</button>
+</div>
+<div class="ad-network">
+  <div><div class="name">💬 الدعم الفني</div><div class="desc">لأي استفسار أو مشكلة</div></div>
+  <button class="ad-btn" onclick="openLink('https://t.me/PaidHubSupport_Bot')">تواصل</button>
+</div>
+<div class="ad-network">
+  <div><div class="name">📄 سياسة الخصوصية</div><div class="desc">اقرأ كيف نحمي بياناتك</div></div>
+  <button class="ad-btn" onclick="openLink('https://paidhub-frontend.vercel.app/privacy.html')">قراءة</button>
+</div>
+<div id="transactionsBox" style="display:none; padding-bottom:20px;">
     <div class="section-title">📜 سجل المعاملات</div>
     <div id="txList"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div></div>
   </div>
