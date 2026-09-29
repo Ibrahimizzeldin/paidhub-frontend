@@ -31,13 +31,13 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
 .ad-btn { background:#0ea5e9; color:#fff; border:none; padding:8px 14px; border-radius:9px; font-weight:bold; cursor:pointer; font-size:11px; }
 .ad-btn.disabled { background:#475569; cursor:not-allowed; }
 .ad-btn.success { background:#10b981; }
-.bottom-nav { position:fixed; bottom:12px; left:8px; right:8px; background:#0f172a; border:1px solid #1e293b; border-radius:18px; display:flex; justify-content:space-around; padding:6px 0; z-index:9999; box-shadow:0 -4px 20px rgba(0,0,0,0.5); }
+  .bottom-nav { position:fixed; bottom:12px; left:8px; right:8px; background:#0f172a; border:1px solid #1e293b; border-radius:18px; display:flex; justify-content:space-around; padding:6px 0; z-index:9999; box-shadow:0 -4px 20px rgba(0,0,0,0.5); }
 .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; color:#64748b; font-size:9px; cursor:pointer; background:none; border:none; flex:1; padding:4px; }
 .nav-item.active { color:#0ea5e9; }
 .nav-item .icon { font-size:16px; }
 .tab-content { display:none; }
 .tab-content.active { display:block; }
-  .tabs-bar { display:flex; gap:5px; margin:8px 12px; background:#1e293b; padding:4px; border-radius:12px; }
+.tabs-bar { display:flex; gap:5px; margin:8px 12px; background:#1e293b; padding:4px; border-radius:12px; }
 .tabs-bar button { flex:1; padding:8px; border:none; background:transparent; color:#94a3b8; border-radius:9px; font-size:11px; cursor:pointer; font-weight:bold; }
 .tabs-bar button.active { background:#0ea5e9; color:#fff; }
 .ref-link-box { background:#0f172a; padding:10px; border-radius:9px; margin:10px 0; word-break:break-all; font-size:11px; color:#94a3b8; }
@@ -74,8 +74,7 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
 </style>
 </head>
 <body>
-
-<div class="header">
+  <div class="header">
   <div>
     <h1>PaidHubEarn</h1>
     <span class="badge">⭐ برونزي</span>
@@ -161,8 +160,7 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
     <div class="section-title">👥 قائمة الأصدقاء المدعوين</div>
     <div id="friendsList" style="padding-bottom:20px;"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div></div>
   </div>
-
-  <div id="friends-ambassadors" style="display:none;">
+    <div id="friends-ambassadors" style="display:none;">
     <div class="card">
       <div class="section-title" style="padding:0; text-align:center;">👑 برنامج السفراء</div>
       <div style="text-align:center; margin-top:8px; color:#94a3b8; font-size:11px;">هل لديك قناة؟ وزّع حتى 2 رمز ترويجي يومياً واربح $0.0005 USDT لكل مطالبة.</div>
@@ -190,6 +188,7 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
     </div>
   </div>
 </div>
+
 <div class="tab-content" id="tab-account">
   <div class="card">
     <div class="balance-label">معلومات الحساب</div>
@@ -220,7 +219,6 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
     <div id="txList"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">جاري التحميل...</div></div>
   </div>
 </div>
-
 <div class="tab-content" id="tab-contest">
   <div class="tabs-bar">
     <button class="active" id="contestTab-ads" onclick="switchContestTab('ads')">📺 الإعلانات</button>
@@ -303,26 +301,40 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
 
   <div class="section-title">📋 حملاتي</div>
   <div id="myCampaigns" style="padding-bottom:20px;"><div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">لا توجد حملات بعد.</div></div>
-
-  <div id="paymentModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:flex-end;">
-    <div style="background:#0f172a; width:100%; border-radius:20px 20px 0 0; padding:20px; border-top:1px solid #1e293b;">
+    <div id="paymentModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:flex-end; overflow-y:auto;">
+    <div style="background:#0f172a; width:100%; border-radius:20px 20px 0 0; padding:20px; border-top:1px solid #1e293b; max-height:90vh; overflow-y:auto;">
       <div style="text-align:center; font-size:15px; font-weight:bold; margin-bottom:8px;">💳 إتمام الدفع</div>
-      <div style="text-align:center; color:#94a3b8; font-size:11px; margin-bottom:16px;">حوّل المبلغ إلى محفظة المشروع عبر USDT على شبكة TON</div>
+      <div style="text-align:center; color:#94a3b8; font-size:11px; margin-bottom:16px;">حوّل USDT على شبكة TON إلى محفظة المشروع</div>
 
       <div style="background:#1e293b; padding:12px; border-radius:10px; margin-bottom:10px;">
-        <div style="color:#94a3b8; font-size:10px; margin-bottom:4px;">المبلغ (يجب تحويله بالضبط)</div>
+        <div style="color:#94a3b8; font-size:10px; margin-bottom:4px;">المبلغ (بالضبط)</div>
         <div style="color:#f59e0b; font-size:18px; font-weight:bold;" id="payAmount">0.0000 USDT</div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,#7c2d12,#1e293b); padding:14px; border-radius:10px; margin-bottom:10px; border:1px solid #f59e0b;">
+        <div style="color:#f59e0b; font-size:11px; margin-bottom:6px; font-weight:bold;">🔑 كود الدفع (إلزامي)</div>
+        <div style="color:#fff; font-size:22px; font-weight:bold; font-family:monospace; letter-spacing:2px; text-align:center; direction:ltr;" id="payCode">PH-XXXXXX</div>
+        <button class="btn-primary" style="background:#f59e0b; color:#000; margin-top:10px; padding:8px; font-size:11px;" onclick="copyPayCode()">📋 نسخ الكود</button>
+      </div>
+
+      <div style="background:#0f172a; padding:12px; border-radius:10px; margin-bottom:10px; border-left:3px solid #ef4444;">
+        <div style="color:#ef4444; font-size:11px; font-weight:bold; margin-bottom:6px;">⚠️ مهم جداً</div>
+        <div style="color:#e2e8f0; font-size:11px; line-height:1.7;">
+          • في محفظتك، اكتب هذا الكود في خانة <b>Comment</b> (التعليق) قبل تأكيد الدفع.<br>
+          • إن لم تكتب الكود، لن يتم تفعيل الحملة تلقائياً.
+        </div>
       </div>
 
       <div style="background:#1e293b; padding:12px; border-radius:10px; margin-bottom:10px;">
         <div style="color:#94a3b8; font-size:10px; margin-bottom:4px;">عنوان محفظة المشروع (TON)</div>
         <div style="color:#fff; font-size:11px; word-break:break-all; font-family:monospace;" id="payAddress">UQALZMicg23BUZMS0VgEMC713rfMMdsmyyf3AWU999Jh9unf</div>
+        <button class="btn-primary" style="background:#475569; margin-top:8px; padding:8px; font-size:11px;" onclick="copyAddress()">📋 نسخ عنوان المحفظة</button>
       </div>
 
-      <button class="btn-primary" style="background:#475569; margin-bottom:8px;" onclick="copyAddress()">📋 نسخ عنوان المحفظة</button>
       <button class="btn-primary" style="background:#10b981; margin-bottom:8px;" onclick="openTonkeeperPayment()">💳 ادفع الآن عبر المحفظة</button>
-      <button class="btn-primary" style="background:#10b981; margin-bottom:8px;" onclick="confirmCampaignPayment()">🔍 تحقق من الدفع</button>
-      <button class="btn-primary" style="background:#1e293b;" onclick="closePaymentModal()">إلغاء</button>
+      <button class="btn-primary" style="background:#0ea5e9; margin-bottom:8px;" onclick="confirmCampaignPayment()">🔍 تحقق من الدفع</button>
+      <button class="btn-primary" style="background:#ef4444; margin-bottom:8px;" onclick="cancelPendingCampaign()">❌ إلغاء الحملة</button>
+      <button class="btn-primary" style="background:#1e293b;" onclick="closePaymentModal()">إغلاق</button>
     </div>
   </div>
 </div>
@@ -428,8 +440,7 @@ function startResetTimer() {
     if (ct) ct.innerText = String(h).padStart(2,'0')+'h '+String(m).padStart(2,'0')+'m';
   }, 1000);
 }
-
-function initTonConnect() {
+  function initTonConnect() {
   if (!window.TON_CONNECT_UI) return;
   try {
     tonConnectUI = new TON_CONNECT_UI.TonConnectUI({ manifestUrl: MANIFEST_URL });
@@ -512,7 +523,7 @@ function toggleNotifications() {
   } else {
     btn.classList.add('success'); btn.classList.remove('disabled'); btn.innerText = 'مفعّل';
   }
-}
+  }
   async function submitAmbassador() {
   if (!currentUser) { if (tg) tg.showAlert('الرجاء فتح التطبيق من تلغرام'); return; }
   var link = document.getElementById('ambChannelLink').value.trim();
@@ -571,9 +582,8 @@ async function clickCampaign(campaignId, link) {
     await loadCampaigns();
     if (tg) tg.showAlert('✅ تم إضافة ' + REWARD_PER_CLICK.toFixed(4) + ' USDT');
   }, 1200);
-}
-
-async function prepareCampaignPayment() {
+  }
+  async function prepareCampaignPayment() {
   if (!currentUser) { if (tg) tg.showAlert('الرجاء فتح التطبيق من تلغرام'); return; }
   var link = document.getElementById('campLink').value.trim();
   var title = document.getElementById('campTitle').value.trim();
@@ -597,9 +607,11 @@ async function prepareCampaignPayment() {
       desc: desc,
       clicks: clicks,
       cost: data.cost,
-      paymentAmount: data.payment_amount
+      paymentAmount: data.payment_amount,
+      paymentCode: data.payment_code
     };
     document.getElementById('payAmount').innerText = data.payment_amount.toFixed(4) + ' USDT';
+    document.getElementById('payCode').innerText = data.payment_code;
     document.getElementById('paymentModal').style.display = 'flex';
   } catch(e) {
     if (tg) tg.showAlert('خطأ في الاتصال');
@@ -613,12 +625,14 @@ function closePaymentModal() {
 
 function copyAddress() {
   var addr = document.getElementById('payAddress').innerText;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(addr);
-    if (tg) tg.showAlert('✅ تم نسخ العنوان');
-  } else {
-    if (tg) tg.showAlert('انسخ يدوياً: ' + addr);
-  }
+  if (navigator.clipboard) { navigator.clipboard.writeText(addr); if (tg) tg.showAlert('✅ تم نسخ العنوان'); }
+  else { if (tg) tg.showAlert('انسخ يدوياً: ' + addr); }
+}
+
+function copyPayCode() {
+  var code = document.getElementById('payCode').innerText;
+  if (navigator.clipboard) { navigator.clipboard.writeText(code); if (tg) tg.showAlert('✅ تم نسخ كود الدفع: ' + code); }
+  else { if (tg) tg.showAlert('انسخ يدوياً: ' + code); }
 }
 
 function openTonkeeperPayment() {
@@ -628,7 +642,7 @@ function openTonkeeperPayment() {
   var amountMicro = Math.round(pendingCampaign.paymentAmount * 1000000);
   var url = 'https://app.tonkeeper.com/transfer/' + projectWallet + '?jetton=' + usdtJetton + '&amount=' + amountMicro;
   window.open(url, '_blank');
-  if (tg) tg.showAlert('تم فتح محفظتك. ادفع المبلغ بالضبط (' + pendingCampaign.paymentAmount.toFixed(4) + ' USDT) ثم عد واضغط "تحقق من الدفع".');
+  if (tg) tg.showAlert('تم فتح محفظتك.\n\n⚠️ لا تنسَ كتابة كود الدفع في خانة Comment:\n' + pendingCampaign.paymentCode);
 }
 
 async function confirmCampaignPayment() {
@@ -644,10 +658,7 @@ async function confirmCampaignPayment() {
     try {
       var res = await fetch(API_URL + '/api/campaigns/check?campaign_id=' + pendingCampaign.id);
       var data = await res.json();
-      if (data.ok && data.campaign_id === pendingCampaign.id) {
-        found = true;
-        break;
-      }
+      if (data.ok && data.campaign_id === pendingCampaign.id) { found = true; break; }
     } catch(e) {}
     await new Promise(r => setTimeout(r, 6000));
   }
@@ -663,8 +674,28 @@ async function confirmCampaignPayment() {
     loadMyCampaigns();
     loadCampaigns();
   } else {
-    if (tg) tg.showAlert('⏳ لم يتم العثور على الدفع بعد. تحقق من المبلغ وحاول مجدداً خلال دقيقة.');
+    if (tg) tg.showAlert('⚠️ لم يصل الدفع بعد.\n\nتأكد من:\n• تحويل المبلغ بالضبط: ' + pendingCampaign.paymentAmount.toFixed(4) + ' USDT\n• كتابة كود الدفع في Comment: ' + pendingCampaign.paymentCode + '\n• الشبكة: TON\n\nيمكنك المحاولة مجدداً أو إلغاء الحملة.');
   }
+}
+
+async function cancelPendingCampaign() {
+  if (!pendingCampaign || !currentUser) return;
+  if (tg && tg.showConfirm) {
+    tg.showConfirm('هل تريد إلغاء هذه الحملة؟', async function(ok) { if (ok) await doCancel(); });
+  } else {
+    if (confirm('إلغاء الحملة؟')) await doCancel();
+  }
+}
+
+async function doCancel() {
+  try {
+    await fetch(API_URL + '/api/campaigns/cancel?campaign_id=' + pendingCampaign.id + '&user_id=' + currentUser.telegram_id, { mode: 'no-cors' });
+  } catch(e) {}
+  setTimeout(function() {
+    closePaymentModal();
+    if (tg) tg.showAlert('✅ تم إلغاء الحملة.');
+    loadMyCampaigns();
+  }, 900);
 }
 
 async function loadMyCampaigns() {
