@@ -225,7 +225,7 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
 </div>
 <div class="ad-network">
   <div><div class="name">📄 سياسة الخصوصية</div><div class="desc">اقرأ كيف نحمي بياناتك</div></div>
-  <button class="ad-btn" onclick="openLink('https://paidhub-frontend.vercel.app/privacy.html')">قراءة</button>
+  <button class="ad-btn" onclick="openWebLink('https://paidhub-frontend.vercel.app/privacy.html')">قراءة</button>
 </div>
 <div id="transactionsBox" style="display:none; padding-bottom:20px;">
     <div class="section-title">📜 سجل المعاملات</div>
@@ -897,7 +897,8 @@ async function watchAd(network, reward) {
 }
 
 function openLink(url) { if (tg) tg.openTelegramLink(url); else window.open(url, '_blank'); }
-
+function openWebLink(url) { if (tg && tg.openLink) { tg.openLink(url); } else { window.open(url, '_blank'); } }
+function openWebLink(url) { if (tg && tg.openLink) { tg.openLink(url); } else { window.open(url, '_blank'); } }
 async function claimDailyLogin() {
   if (!currentUser) return;
   try { await fetch(API_URL + '/api/tasks/claim?user_id=' + currentUser.telegram_id + '&task=daily_login', { mode: 'no-cors' }); } catch(e) {}
