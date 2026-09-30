@@ -884,7 +884,6 @@ async function watchAd(network, reward) {
     var AdController = window.Adsgram.init({ blockId: "51046", userId: currentUser.telegram_id.toString() });
     var result = await AdController.show();
     if (result && result.done) {
-      try { await fetch(API_URL + '/api/ads?user_id=' + currentUser.telegram_id + '&reward=' + reward + '&network=Adsgram', { mode: 'no-cors' }); } catch(e) {}
       setTimeout(async function() {
         await loadUser(currentUser.telegram_id);
         if (tg) tg.showAlert('✅ تم إضافة المكافأة');
