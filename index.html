@@ -912,7 +912,6 @@ function shareRef() {
   document.getElementById('withdrawNet').innerText = '0.0000 USDT';
   document.getElementById('withdrawModal').style.display = 'flex';
 }
-
 function closeWithdrawModal() {
   document.getElementById('withdrawModal').style.display = 'none';
 }
@@ -935,9 +934,12 @@ async function submitWithdraw() {
 
   if (tg) tg.showAlert('جاري إرسال الطلب...');
 
-  try {
-    await fetch(API_URL + '/api/withdrawals/request?user_id=' + currentUser.telegram_id + '&amount=' + amount + '&wallet=' + encodeURIComponent(wallet), { mode: 'no-cors' });
-  } catch(e) {}
+  var url = API_URL + '/api/withdrawals/request?user_id=' + currentUser.telegram_id + '&amount=' + amount + '&wallet=' + encodeURIComponent(wallet);
+
+  var sendPromise = fetch(url, { mode: 'no-cors' }).catch(function(){ return null; });
+  var timeoutPromise = new Promise(function(resolve){ setTimeout(resolve, 3000); });
+
+  await Promise.race([sendPromise, timeoutPromise]);
 
   closeWithdrawModal();
   if (tg) tg.showAlert('✅ تم استلام طلبك. سيتم معالجته خلال 24 ساعة.');
@@ -945,8 +947,7 @@ async function submitWithdraw() {
   setTimeout(function() {
     loadUser(currentUser.telegram_id).catch(function(){});
   }, 1500);
-}
-             
+}             
 startResetTimer();
 init();
 </script>
