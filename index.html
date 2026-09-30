@@ -932,22 +932,18 @@ async function submitWithdraw() {
   if (amount > parseFloat(currentUser.balance || 0)) { if (tg) tg.showAlert('رصيدك غير كافٍ'); return; }
   if (!wallet || (wallet.indexOf('UQ') !== 0 && wallet.indexOf('EQ') !== 0)) { if (tg) tg.showAlert('أدخل عنوان محفظة TON صحيح'); return; }
 
-  if (tg) tg.showAlert('جاري إرسال الطلب...');
+  closeWithdrawModal();
 
   var url = API_URL + '/api/withdrawals/request?user_id=' + currentUser.telegram_id + '&amount=' + amount + '&wallet=' + encodeURIComponent(wallet);
 
-  var sendPromise = fetch(url, { mode: 'no-cors' }).catch(function(){ return null; });
-  var timeoutPromise = new Promise(function(resolve){ setTimeout(resolve, 3000); });
+  fetch(url, { mode: 'no-cors' }).catch(function(){});
 
-  await Promise.race([sendPromise, timeoutPromise]);
-
-  closeWithdrawModal();
   if (tg) tg.showAlert('✅ تم استلام طلبك. سيتم معالجته خلال 24 ساعة.');
 
   setTimeout(function() {
     loadUser(currentUser.telegram_id).catch(function(){});
-  }, 1500);
-}             
+  }, 2000);
+}
 startResetTimer();
 init();
 </script>
