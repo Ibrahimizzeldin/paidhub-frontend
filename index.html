@@ -89,7 +89,7 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <div class="card">
     <div class="balance-label">أرباحك</div>
     <div class="balance-value"><span id="userBalance">0.0000</span> <span class="usd">USDT</span></div>
-    <button class="btn-primary" onclick="alert('قريباً')">💸 سحب</button>
+    <button class="btn-primary" onclick="openWithdrawModal()">💸 سحب</button>
     <div class="stats-row">
       <div class="stat-box"><div class="num" id="multiplierDisplay">x1.00</div><div class="lbl">مضاعف الإعلانات</div></div>
       <div class="stat-box"><div class="num" id="weeklyViews">0</div><div class="lbl">هذا الأسبوع</div></div>
@@ -350,7 +350,45 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
     </div>
   </div>
 </div>
+<div id="withdrawModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:flex-end; overflow-y:auto;">
+  <div style="background:#0f172a; width:100%; border-radius:20px 20px 0 0; padding:20px; border-top:1px solid #1e293b; max-height:90vh; overflow-y:auto;">
+    <div style="text-align:center; font-size:15px; font-weight:bold; margin-bottom:8px;">💸 طلب سحب</div>
+    <div style="text-align:center; color:#94a3b8; font-size:11px; margin-bottom:16px;">سيتم إرسال USDT إلى محفظتك على شبكة TON</div>
 
+    <div style="background:#1e293b; padding:12px; border-radius:10px; margin-bottom:10px;">
+      <div style="color:#94a3b8; font-size:10px; margin-bottom:4px;">رصيدك الحالي</div>
+      <div style="color:#10b981; font-size:16px; font-weight:bold;" id="withdrawBalance">0.0000 USDT</div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div style="color:#94a3b8; font-size:11px;">المبلغ (الحد الأدنى 1 USDT)</div>
+      <input id="withdrawAmount" type="number" step="0.01" placeholder="1.00" class="camp-input" oninput="updateWithdrawNet()">
+    </div>
+
+    <div style="margin-top:12px;">
+      <div style="color:#94a3b8; font-size:11px;">عنوان محفظتك على TON</div>
+      <input id="withdrawWallet" type="text" placeholder="UQ..." class="camp-input">
+    </div>
+
+    <div style="background:#0f172a; padding:12px; border-radius:9px; margin-top:14px; font-size:11px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <span style="color:#94a3b8;">رسوم السحب:</span>
+        <span style="color:#ef4444; font-weight:bold;">0.05 USDT</span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span style="color:#94a3b8;">المبلغ الصافي:</span>
+        <span style="color:#10b981; font-weight:bold;" id="withdrawNet">0.0000 USDT</span>
+      </div>
+    </div>
+
+    <div style="background:#0f172a; padding:10px; border-radius:9px; margin-top:12px; font-size:10px; color:#f59e0b; line-height:1.6;">
+      ⚠️ تأكد من صحة العنوان. الأموال المُرسلة لعنوان خاطئ لا يمكن استرجاعها.
+    </div>
+
+    <button class="btn-primary" style="background:#10b981; margin-top:12px; margin-bottom:8px;" onclick="submitWithdraw()">📤 إرسال الطلب</button>
+    <button class="btn-primary" style="background:#1e293b;" onclick="closeWithdrawModal()">إغلاق</button>
+  </div>
+</div>
 <div class="bottom-nav">
   <button class="nav-item" onclick="showTabByName('account')"><span class="icon">👤</span>الحساب</button>
   <button class="nav-item" onclick="showTabByName('promote')"><span class="icon">📢</span>ترويج</button>
@@ -866,6 +904,46 @@ function shareRef() {
   else window.open(share, '_blank');
 }
 
+  function openWithdrawModal() {
+  if (!currentUser) { if (tg) tg.showAlert('الرجاء فتح التطبيق من تلغرام'); return; }
+  document.getElementById('withdrawBalance').innerText = (currentUser.balance || 0).toFixed(4) + ' USDT';
+  document.getElementById('withdrawAmount').value = '';
+  document.getElementById('withdrawWallet').value = currentUser.ton_wallet || '';
+  document.getElementById('withdrawNet').innerText = '0.0000 USDT';
+  document.getElementById('withdrawModal').style.display = 'flex';
+}
+
+function closeWithdrawModal() {
+  document.getElementById('withdrawModal').style.display = 'none';
+}
+
+function updateWithdrawNet() {
+  var amount = parseFloat(document.getElementById('withdrawAmount').value || 0);
+  var net = amount - 0.05;
+  if (net < 0) net = 0;
+  document.getElementById('withdrawNet').innerText = net.toFixed(4) + ' USDT';
+}
+
+async function submitWithdraw() {
+  if (!currentUser) return;
+  var amount = parseFloat(document.getElementById('withdrawAmount').value || 0);
+  var wallet = document.getElementById('withdrawWallet').value.trim();
+
+  if (!amount || amount < 1) { if (tg) tg.showAlert('الحد الأدنى للسحب: 1 USDT'); return; }
+  if (amount > parseFloat(currentUser.balance || 0)) { if (tg) tg.showAlert('رصيدك غير كافٍ'); return; }
+  if (!wallet || (wallet.indexOf('UQ') !== 0 && wallet.indexOf('EQ') !== 0)) { if (tg) tg.showAlert('أدخل عنوان محفظة TON صحيح'); return; }
+
+  if (tg) tg.showAlert('جاري إرسال الطلب...');
+  try {
+    await fetch(API_URL + '/api/withdrawals/request?user_id=' + currentUser.telegram_id + '&amount=' + amount + '&wallet=' + encodeURIComponent(wallet), { mode: 'no-cors' });
+  } catch(e) {}
+  setTimeout(async function() {
+    await loadUser(currentUser.telegram_id);
+    closeWithdrawModal();
+    if (tg) tg.showAlert('✅ تم استلام طلبك. سيتم معالجته خلال 24 ساعة.');
+  }, 1200);
+  }
+             
 startResetTimer();
 init();
 </script>
