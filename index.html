@@ -881,7 +881,7 @@ async function watchAd(network, reward) {
   if (!window.Adsgram) { if (tg) tg.showAlert('جاري تحميل SDK...'); return; }
 
   try {
-    var AdController = window.Adsgram.init({ blockId: "51019", userId: currentUser.telegram_id.toString() });
+    var AdController = window.Adsgram.init({ blockId: "51046", userId: currentUser.telegram_id.toString() });
     var result = await AdController.show();
     if (result && result.done) {
       try { await fetch(API_URL + '/api/ads?user_id=' + currentUser.telegram_id + '&reward=' + reward + '&network=Adsgram', { mode: 'no-cors' }); } catch(e) {}
