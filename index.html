@@ -768,7 +768,9 @@ async function loadMyCampaigns() {
     html += '<div class="camp-card"><div class="camp-title">' + icon + ' ' + (c.title || 'حملة') + '</div>' +
       '<div class="camp-stats"><span>' + (statusLabel[c.status] || c.status) + '</span><span>' + done + ' / ' + total + '</span></div>' +
       '<div class="progress-bar"><div class="progress-bar-inner" style="width:' + pct + '%"></div></div>' +
-      '<div class="camp-stats"><span>التكلفة: ' + parseFloat(c.cost || 0).toFixed(4) + ' USDT</span><span class="camp-reward">+' + REWARD_PER_CLICK.toFixed(4) + ' / نقرة</span></div></div>';
+      '<div class="camp-stats"><span>التكلفة: ' + parseFloat(c.cost || 0).toFixed(4) + ' USDT</span><span class="camp-reward">+' + REWARD_PER_CLICK.toFixed(4) + ' / نقرة</span></div>' +
+      (c.status === 'pending_payment' ? '<button class="btn-primary" style="background:#ef4444; margin-top:8px;" onclick="cancelMyCampaign(\'' + c.id + '\')">❌ إلغاء هذه الحملة</button>' : '') +
+      '</div>';
   }
   el.innerHTML = html;
 }
@@ -943,6 +945,27 @@ async function submitWithdraw() {
   setTimeout(function() {
     loadUser(currentUser.telegram_id).catch(function(){});
   }, 2000);
+}
+  async function cancelMyCampaign(campaignId) {
+  if (!currentUser) return;
+  if (tg && tg.showConfirm) {
+    tg.showConfirm('هل تريد إلغاء هذه الحملة؟', async function(ok) {
+      if (!ok) return;
+      await doCancelMyCampaign(campaignId);
+    });
+  } else {
+    if (confirm('إلغاء الحملة؟')) await doCancelMyCampaign(campaignId);
+  }
+}
+
+async function doCancelMyCampaign(campaignId) {
+  try {
+    await fetch(API_URL + '/api/campaigns/cancel?campaign_id=' + campaignId + '&user_id=' + currentUser.telegram_id, { mode: 'no-cors' });
+  } catch(e) {}
+  setTimeout(function() {
+    if (tg) tg.showAlert('✅ تم إلغاء الحملة.');
+    loadMyCampaigns();
+  }, 900);
 }
 startResetTimer();
 init();
