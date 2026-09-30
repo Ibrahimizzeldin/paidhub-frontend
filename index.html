@@ -934,15 +934,18 @@ async function submitWithdraw() {
   if (!wallet || (wallet.indexOf('UQ') !== 0 && wallet.indexOf('EQ') !== 0)) { if (tg) tg.showAlert('أدخل عنوان محفظة TON صحيح'); return; }
 
   if (tg) tg.showAlert('جاري إرسال الطلب...');
+
   try {
     await fetch(API_URL + '/api/withdrawals/request?user_id=' + currentUser.telegram_id + '&amount=' + amount + '&wallet=' + encodeURIComponent(wallet), { mode: 'no-cors' });
   } catch(e) {}
-  setTimeout(async function() {
-    await loadUser(currentUser.telegram_id);
-    closeWithdrawModal();
-    if (tg) tg.showAlert('✅ تم استلام طلبك. سيتم معالجته خلال 24 ساعة.');
-  }, 1200);
-  }
+
+  closeWithdrawModal();
+  if (tg) tg.showAlert('✅ تم استلام طلبك. سيتم معالجته خلال 24 ساعة.');
+
+  setTimeout(function() {
+    loadUser(currentUser.telegram_id).catch(function(){});
+  }, 1500);
+}
              
 startResetTimer();
 init();
