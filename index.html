@@ -837,7 +837,7 @@ async function loadFriends(userId) {
   var active = 0, pending = 0, html = '';
   for (var i = 0; i < res.data.length; i++) {
     var f = res.data[i];
-    var isActive = (f.daily_views_count || 0) >= 10;
+    var isActive = (f.daily_views_count || 0) >= 3;
     if (isActive) active++; else pending++;
     var name = f.first_name || (f.username ? '@' + f.username : 'User');
     html += '<div class="friend-row"><div><div class="friend-name">' + name + '</div><div class="friend-status ' + (isActive ? 'active' : 'pending') + '">' + (isActive ? '✅ نشط' : '⏳ معلق') + '</div></div><div style="color:#10b981; font-size:11px;">' + (isActive ? '+0.01' : '0.00') + '</div></div>';
