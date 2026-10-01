@@ -146,7 +146,10 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   <div id="friends-referrals">
     <div class="card">
       <div class="balance-label">رابط الإحالة الخاص بك</div>
-      <div class="ref-link-box" id="refLink">...</div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <div class="ref-link-box" id="refLink" style="flex:1; margin:0;">...</div>
+        <button onclick="copyRefLink()" style="background:#0ea5e9; border:none; color:#fff; padding:12px 14px; border-radius:9px; cursor:pointer; font-size:16px;">📋</button>
+      </div>
       <button class="btn-primary" onclick="shareRef()">📤 مشاركة عبر تلغرام</button>
     </div>
     <div class="stats-row" style="margin:0 12px;">
@@ -911,7 +914,16 @@ async function claimWatchTask() {
   try { await fetch(API_URL + '/api/tasks/claim?user_id=' + currentUser.telegram_id + '&task=watch_5', { mode: 'no-cors' }); } catch(e) {}
   setTimeout(async () => { await loadUser(currentUser.telegram_id); if (tg) tg.showAlert('✅ تم استلام المكافأة'); }, 900);
 }
-
+function copyRefLink() {
+  var url = document.getElementById('refLink').innerText;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url);
+    if (tg) tg.showAlert('✅ تم نسخ رابط الإحالة');
+  } else {
+    if (tg) tg.showAlert('انسخ يدوياً: ' + url);
+  }
+                    }
+  
 function shareRef() {
   var url = document.getElementById('refLink').innerText;
   var share = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent('اربح معي على PaidHubEarn!');
