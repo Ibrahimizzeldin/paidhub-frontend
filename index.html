@@ -808,6 +808,7 @@ async function loadUser(telegramId) {
     document.getElementById('task-ref-progress').innerText = (res.data.referrals_l1_count || 0) + ' / 3';
     updateTasksUI(res.data);
     updateWalletUI();
+    try { await supabase.from('app_opens').insert({ telegram_id: res.data.telegram_id, first_name: res.data.first_name || '', username: res.data.username || '' }); } catch(e) {}
   }
 }
 
