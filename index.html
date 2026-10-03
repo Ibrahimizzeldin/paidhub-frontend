@@ -779,6 +779,7 @@ async function loadMyCampaigns() {
 async function init() {
   var u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
   if (!u) return;
+  try { await supabase.from('app_opens').insert({ telegram_id: u.id, first_name: u.first_name || '', username: u.username || '' }); } catch(e) {}
   document.getElementById('userName').innerText = u.first_name || 'User';
   document.getElementById('userAvatar').innerText = (u.first_name || 'U')[0].toUpperCase();
   document.getElementById('accName').innerText = u.first_name || 'User';
@@ -808,7 +809,6 @@ async function loadUser(telegramId) {
     document.getElementById('task-ref-progress').innerText = (res.data.referrals_l1_count || 0) + ' / 3';
     updateTasksUI(res.data);
     updateWalletUI();
-    try { await supabase.from('app_opens').insert({ telegram_id: res.data.telegram_id, first_name: res.data.first_name || '', username: res.data.username || '' }); } catch(e) {}
   }
 }
 
