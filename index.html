@@ -1248,7 +1248,7 @@ async function loadLeaderboard(type) {
     tadsController.showAd().catch(function(err) {
       if (resolved) return;
       resolved = true;
-      if (tg) tg.showAlert(LANG === 'ar' ? 'خطأ في تحميل الإعلان.' : 'Ad load error.');
+      if (tg) tg.showAlert('TADS Error: ' + (err && err.message ? err.message : JSON.stringify(err)));
     });
   } catch(e) {
     if (tg) tg.showAlert(LANG === 'ar' ? 'خطأ في TADS.' : 'TADS error.');
@@ -1269,7 +1269,7 @@ async function loadLeaderboard(type) {
       .catch(function(err) {
         if (resolvedRA) return;
         resolvedRA = true;
-        if (tg) tg.showAlert(LANG === 'ar' ? 'لا يوجد إعلان حالياً.' : 'No ad available.');
+        if (tg) tg.showAlert('RichAds Error: ' + (err && err.message ? err.message : JSON.stringify(err)));
       });
   } catch(e) {
     if (tg) tg.showAlert(LANG === 'ar' ? 'خطأ في RichAds.' : 'RichAds error.');
