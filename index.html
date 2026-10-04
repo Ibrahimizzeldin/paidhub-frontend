@@ -1251,10 +1251,31 @@ async function loadLeaderboard(type) {
     });
   } catch(e) {
     if (tg) tg.showAlert(LANG === 'ar' ? 'خطأ في TADS.' : 'TADS error.');
+          }
+    } else if (network === 'RichAds') {
+  if (!window.TelegramAdsController) {
+    if (tg) tg.showAlert(LANG === 'ar' ? 'RichAds loading...' : 'RichAds loading...');
+    return;
   }
-  } else {
-    if (tg) tg.showAlert(LANG === 'ar' ? 'قريباً' : 'Coming soon');
+  try {
+    var resolvedRA = false;
+    window.TelegramAdsController.triggerInterstitialVideo()
+      .then(async function(result) {
+        if (resolvedRA) return;
+        resolvedRA = true;
+        await addReward(reward, 'RichAds');
+      })
+      .catch(function(err) {
+        if (resolvedRA) return;
+        resolvedRA = true;
+        if (tg) tg.showAlert(LANG === 'ar' ? 'لا يوجد إعلان حالياً.' : 'No ad available.');
+      });
+  } catch(e) {
+    if (tg) tg.showAlert(LANG === 'ar' ? 'خطأ في RichAds.' : 'RichAds error.');
   }
+} else {
+  if (tg) tg.showAlert(LANG === 'ar' ? 'قريباً' : 'Coming soon');
+                                             }
 }
 
 async function addReward(reward, network) {
