@@ -236,6 +236,7 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
   </div>
   <div class="ad-network">
     <div><div class="name" data-i18n="language">🌐 اللغة</div><div class="reward" id="currentLang">العربية</div></div>
+    <button class="ad-btn" onclick="toggleLanguage()" id="langBtn">English</button>
   </div>
   <div class="ad-network">
     <div><div class="name" data-i18n="official_channel">📢 القناة الرسمية</div><div class="desc" data-i18n="channel_desc">تابع آخر التحديثات وإثباتات السحب</div></div>
@@ -681,7 +682,28 @@ function applyI18n() {
   var langEl = document.getElementById('currentLang');
   if (langEl) langEl.innerText = LANG === 'ar' ? 'العربية' : 'English';
 }
+function toggleLanguage() {
+  LANG = (LANG === 'ar') ? 'en' : 'ar';
+  localStorage.setItem('paidhub_lang', LANG);
+  applyI18n();
+  updateLangButton();
+  if (currentUser) {
+    loadFriends(currentUser.id);
+    loadLeaderboard(currentContestType);
+    loadCampaigns();
+    loadMyCampaigns();
+    loadMyAmbassador();
+    loadTransactions();
+    updateWalletUI();
+    updateTasksUI(currentUser);
+  }
+  if (tg) tg.showAlert(LANG === 'ar' ? '✅ تم تبديل اللغة إلى العربية' : '✅ Language switched to English');
+}
 
+function updateLangButton() {
+  var btn = document.getElementById('langBtn');
+  if (btn) btn.innerText = LANG === 'ar' ? 'English' : 'العربية';
+      }
 var supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 var currentUser = null;
 var currentContestType = 'ads';
