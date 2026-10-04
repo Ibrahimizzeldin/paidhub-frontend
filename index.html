@@ -1333,7 +1333,7 @@ function closeWithdrawModal() {
 
 function updateWithdrawNet() {
   var amount = parseFloat(document.getElementById('withdrawAmount').value || 0);
-  var net = amount - 0.05;
+  var net = amount;
   if (net < 0) net = 0;
   document.getElementById('withdrawNet').innerText = net.toFixed(4) + ' USDT';
 }
@@ -1343,7 +1343,7 @@ async function submitWithdraw() {
   var amount = parseFloat(document.getElementById('withdrawAmount').value || 0);
   var wallet = document.getElementById('withdrawWallet').value.trim();
 
-  if (!amount || amount < 1) { if (tg) tg.showAlert(LANG === 'ar' ? 'الحد الأدنى للسحب: 1 USDT' : 'Minimum withdrawal: 1 USDT'); return; }
+  if (!amount || amount < 0.1) { if (tg) tg.showAlert(LANG === 'ar' ? 'الحد الأدنى للسحب: 0.1 USDT' : 'Minimum withdrawal: 0.1 USDT'); return; }
   if (amount > parseFloat(currentUser.balance || 0)) { if (tg) tg.showAlert(LANG === 'ar' ? 'رصيدك غير كافٍ' : 'Insufficient balance'); return; }
   if (!wallet || (wallet.indexOf('UQ') !== 0 && wallet.indexOf('EQ') !== 0)) { if (tg) tg.showAlert(LANG === 'ar' ? 'أدخل عنوان محفظة TON صحيح' : 'Enter a valid TON wallet'); return; }
 
