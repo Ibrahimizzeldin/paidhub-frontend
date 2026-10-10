@@ -118,6 +118,11 @@ body { background:#0f172a; color:#fff; padding-bottom:80px; min-height:100vh; fo
     <div><div class="name">Adsgram</div><div class="reward" data-i18n="adsgram_reward">💎 0.0006+ لكل مشاهدة</div></div>
     <button class="ad-btn" onclick="watchAd('Adsgram',0.0006)" data-i18n="watch_btn">مشاهدة ▶</button>
   </div>
+  <!-- زر إعلان Onclicka الجديد -->
+<div class="ad-network">
+    <div><div class="name">Onclicka</div><div class="reward" data-i18n="onclicka_reward">💎 +0.0006 لكل مشاهدة</div></div>
+    <button class="ad-btn" onclick="watchAdOnclicka()" data-i18n="watch_ad">مشاهدة</button>
+</div>
   <div class="ad-network"><div><div class="name">TADS</div><div class="reward">💎 0.0005+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('TADS',0.0005)">مشاهدة ▶</button></div>
   <div class="ad-network"><div><div class="name">RichAds</div><div class="reward">💎 0.0004+ لكل مشاهدة</div></div><button class="ad-btn" onclick="watchAd('RichAds',0.0004)">مشاهدة ▶</button></div>
   <div class="section-title" data-i18n="active_campaigns_title">📢 حملات الترويج النشطة</div>
@@ -1357,7 +1362,28 @@ async function submitWithdraw() {
 
   setTimeout(function() { loadUser(currentUser.telegram_id).catch(function(){}); }, 2000);
 }
+// دالة تشغيل إعلان Onclicka
+async function watchAdOnclicka() {
+    if (!window.showRewardedAd) {
+        if (tg) tg.showAlert(LANG === 'ar' ? 'الإعلان غير متاح حالياً، حاول لاحقاً.' : 'Ad not available, try later.');
+        return;
+    }
 
+    window.showRewardedAd()
+        .then(async () => {
+            console.log('Onclicka ad played successfully');
+            if (tg) tg.showAlert(LANG === 'ar' ? 'تمت مشاهدة الإعلان بنجاح!' : 'Ad watched successfully!');
+        })
+        .catch(e => {
+            console.log('Ad error or skipped:', e);
+            if (tg) tg.showAlert(LANG === 'ar' ? 'لم تكتمل مشاهدة الإعلان. يرجى المحاولة مرة أخرى.' : 'Ad not completed. Please try again.');
+        });
+}
+
+// تهيئة إعلان Onclicka
+window.initCdTma?.({ id: 6153364 })
+  .then(show => window.showRewardedAd = show)
+  .catch(e => console.log('Onclicka Init Error:', e));
 startResetTimer();
 init();
 </script>
