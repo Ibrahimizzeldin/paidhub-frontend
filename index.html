@@ -818,7 +818,7 @@ function startResetTimer() {
 async function saveWallet(address) {
   if (!currentUser) return;
   try {
-    const res = await fetch(API_URL + '/api/user/connect-wallet', {
+    const res = await fetch(API_URL + '/api/user?action=connect', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: currentUser.telegram_id, wallet_address: address })
@@ -841,7 +841,7 @@ async function saveWallet(address) {
 
 async function clearWalletFromBackend(userId) {
   try {
-    await fetch(API_URL + '/api/user/disconnect-wallet?user_id=' + userId, { method: 'POST' });
+    await fetch(API_URL + '/api/user?action=disconnect&user_id=' + userId, { method: 'POST' });
     if (currentUser) currentUser.ton_wallet = null;
     updateWalletUI();
   } catch (e) {
