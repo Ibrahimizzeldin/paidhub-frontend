@@ -817,6 +817,7 @@ function startResetTimer() {
 
 async function saveWallet(address) {
   if (!currentUser) return;
+  if (currentUser.ton_wallet === address) return;
   try {
     const res = await fetch(API_URL + '/api/user?action=connect', {
       method: 'POST',
