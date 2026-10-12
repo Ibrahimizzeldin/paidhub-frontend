@@ -804,49 +804,88 @@ function startResetTimer() {
   try {
     tonConnectUI = new TON_CONNECT_UI.TonConnectUI({ manifestUrl: MANIFEST_URL });
     tonConnectUI.onStatusChange(function(wallet) {
-      if (wallet && wallet.account && wallet.account.address) saveWallet(wallet.account.address);
+      if (wallet && wallet.account && wallet.account.address) {
+        saveWallet(wallet.account.address);
+      } else {
+        if (currentUser && currentUser.ton_wallet) {
+           clearWalletFromBackend(currentUser.telegram_id);
+        }
+      }
     });
   } catch(e) { console.log('TON Connect error:', e); }
 }
 
 async function saveWallet(address) {
-  if (!currentUser || !supabase) return;
-  await supabase.from('profiles').update({ ton_wallet: address }).eq('id', currentUser.id);
-  currentUser.ton_wallet = address;
-  updateWalletUI();
+  if (!currentUser) return;
+  try {
+    const res = await fetch(API_URL + '/api/user/connect-wallet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: currentUser.telegram_id, wallet_address: address })
+    });
+    const data = await res.json();
+    
+    if (data.ok) {
+      currentUser.ton_wallet = address;
+      updateWalletUI();
+      if (tg) tg.showAlert(LANG === 'ar' ? '✅ تم ربط المحفظة بنجاح!' : '✅ Wallet linked successfully!');
+    } else {
+      await tonConnectUI.disconnect();
+      if (tg) tg.showAlert(LANG === 'ar' ? '⚠️ هذه المحفظة مرتبطة بحساب آخر بالفعل!' : '⚠️ This wallet is already linked to another account!');
+    }
+  } catch (e) {
+    await tonConnectUI.disconnect();
+    if (tg) tg.showAlert('Error: ' + e.message);
+  }
+}
+
+async function clearWalletFromBackend(userId) {
+  try {
+    await fetch(API_URL + '/api/user/disconnect-wallet?user_id=' + userId, { method: 'POST' });
+    if (currentUser) currentUser.ton_wallet = null;
+    updateWalletUI();
+  } catch (e) {
+    console.log('Error disconnecting wallet:', e);
+  }
 }
 
 function updateWalletUI() {
   var status = document.getElementById('walletStatus');
   var addrEl = document.getElementById('walletAddress');
   var btn = document.getElementById('btnConnectWallet');
-  if (!status) return;
+  if (!status || !btn) return;
+  
   if (currentUser && currentUser.ton_wallet) {
-    status.innerText = LANG === 'ar' ? '✅ محفظة مربوطة' : '✅ Wallet connected';
+    status.innerText = LANG === 'ar' ? '✅ محفظة مرتبطة' : '✅ Wallet connected';
     var short = currentUser.ton_wallet.substring(0, 6) + '...' + currentUser.ton_wallet.substring(currentUser.ton_wallet.length - 4);
-    addrEl.innerText = short;
+    if (addrEl) addrEl.innerText = short;
     btn.innerText = LANG === 'ar' ? 'فصل' : 'Disconnect';
     btn.classList.add('success');
+    btn.style.background = '#ef4444';
   } else {
     status.innerText = t('wallet_not_connected');
-    addrEl.innerText = '';
+    if (addrEl) addrEl.innerText = '';
     btn.innerText = t('connect_btn');
     btn.classList.remove('success');
+    btn.style.background = '#0ea5e9';
   }
 }
 
 async function toggleWallet() {
   if (!tonConnectUI) { if (tg) tg.showAlert(LANG === 'ar' ? 'جاري التحميل...' : 'Loading...'); return; }
+  
   if (currentUser && currentUser.ton_wallet) {
     await tonConnectUI.disconnect();
-    if (supabase) await supabase.from('profiles').update({ ton_wallet: null }).eq('id', currentUser.id);
-    if (currentUser) currentUser.ton_wallet = null;
-    updateWalletUI();
+    await clearWalletFromBackend(currentUser.telegram_id);
     if (tg) tg.showAlert(LANG === 'ar' ? 'تم فصل المحفظة' : 'Wallet disconnected');
   } else {
-    tonConnectUI.openModal();
+    try {
+      tonConnectUI.openModal();
+    } catch (e) {
+      if (tg) tg.showAlert('Error: ' + e.message);
+    }
   }
-  }
+}
   function showTransactions() {
   var box = document.getElementById('transactionsBox');
   if (box.style.display === 'none') { box.style.display = 'block'; loadTransactions(); }
